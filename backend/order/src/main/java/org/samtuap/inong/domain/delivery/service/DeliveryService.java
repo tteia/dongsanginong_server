@@ -31,7 +31,7 @@ public class DeliveryService {
     private final OrderRepository orderRepository;
     private final MemberFeign memberFeign;
     private final ProductFeign productFeign;
-    private final KafkaTemplate kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     /**
      * 사장님 페이지 > 다가오는 배송 처리
