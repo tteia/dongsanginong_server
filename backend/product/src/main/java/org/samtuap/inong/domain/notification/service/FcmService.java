@@ -121,4 +121,15 @@ public class FcmService {
             throw new BaseCustomException(FCM_SEND_FAIL);
         }
     }
+
+    @Transactional
+    public void deleteFcmToken(String fcmToken, Long sellerId) {
+        Seller seller = sellerRepository.findByIdOrThrow(sellerId);
+        Optional<FcmToken> fcmTokenOpt = fcmTokenRepository.findBySellerAndToken(seller, fcmToken);
+
+        if(fcmTokenOpt.isPresent()) {
+            FcmToken token = fcmTokenOpt.get();
+            fcmTokenRepository.delete(token);
+        }
+    }
 }

@@ -53,6 +53,17 @@ public class FcmService {
     }
 
     @Transactional
+    public void deleteFcmToken(String fcmToken, Long memberId) {
+        Member member = memberRepository.findByIdOrThrow(memberId);
+        Optional<FcmToken> fcmTokenOpt = fcmTokenRepository.findByMemberAndToken(member, fcmToken);
+
+        if(fcmTokenOpt.isPresent()) {
+            FcmToken token = fcmTokenOpt.get();
+            fcmTokenRepository.delete(token);
+        }
+    }
+
+    @Transactional
     public void issueNotice(NotificationIssueRequest notiRequest) {
         List<Long> targets = notiRequest.targets();
         for (Long memberId : targets) {
