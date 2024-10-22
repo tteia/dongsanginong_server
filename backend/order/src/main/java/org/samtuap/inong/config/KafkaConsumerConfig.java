@@ -52,26 +52,4 @@ public class KafkaConsumerConfig {
 
         return factory;
     }
-
-    @Bean
-    public ConsumerFactory<String, CouponRequestMessage> couponConsumerFactory() {
-        Map<String, Object> props = new HashMap<>(consumerFactory().getConfigurationProperties());
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "org.samtuap.inong.domain.coupon.dto");
-
-        return new DefaultKafkaConsumerFactory<>(
-                props,
-                new StringDeserializer(),
-                new JsonDeserializer<>(CouponRequestMessage.class)
-        );
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, CouponRequestMessage> couponKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, CouponRequestMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(couponConsumerFactory());
-        // 에러 핸들러 설정 유지
-        factory.setCommonErrorHandler(new DefaultErrorHandler(new FixedBackOff(1000L, 3)));
-        return factory;
-    }
 }

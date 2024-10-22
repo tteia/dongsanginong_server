@@ -20,7 +20,7 @@ public class DiscountController {
     // 할인 생성
     @PostMapping("/{packageProductId}/create")
     public ResponseEntity<DiscountResponse> createDiscount(
-            @PathVariable Long packageProductId,
+            @PathVariable("packageProductId") Long packageProductId,
             @RequestBody DiscountCreateRequest request) {
         DiscountResponse createdDiscount = discountService.createDiscount(packageProductId, request);
         return ResponseEntity.ok(createdDiscount);
@@ -29,7 +29,7 @@ public class DiscountController {
     // 할인 수정
     @PutMapping("/{discountId}/update")
     public ResponseEntity<DiscountResponse> updateDiscount(
-            @PathVariable Long discountId,
+            @PathVariable("discountId") Long discountId,
             @RequestBody DiscountUpdateRequest request) {
         DiscountResponse updatedDiscount = discountService.updateDiscount(discountId, request);
         return ResponseEntity.ok(updatedDiscount);
@@ -37,7 +37,7 @@ public class DiscountController {
 
     // 할인 삭제
     @DeleteMapping("/{discountId}/delete")
-    public ResponseEntity<Void> deleteDiscount(@PathVariable Long discountId) {
+    public ResponseEntity<Void> deleteDiscount(@PathVariable("discountId") Long discountId) {
         discountService.deleteDiscount(discountId);
         return ResponseEntity.noContent().build();
     }
@@ -51,7 +51,7 @@ public class DiscountController {
 
     // 할인 디테일 조회
     @GetMapping("/{discountId}/detail")
-    public ResponseEntity<DiscountResponse> getDiscountDetail(@PathVariable Long discountId) {
+    public ResponseEntity<DiscountResponse> getDiscountDetail(@PathVariable("discountId") Long discountId) {
         DiscountResponse discountDetail = discountService.getDiscountDetail(discountId);
         return ResponseEntity.ok(discountDetail);
     }

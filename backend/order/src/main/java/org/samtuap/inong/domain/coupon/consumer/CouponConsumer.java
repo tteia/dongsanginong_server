@@ -1,5 +1,6 @@
 package org.samtuap.inong.domain.coupon.consumer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.domain.coupon.dto.CouponRequestMessage;
@@ -16,16 +17,20 @@ public class CouponConsumer {
     private final CouponService couponService;
     private final CouponRedisRepository couponRedisRepository;
 
-    @KafkaListener(topics = "coupon-issue-topic", groupId = "coupon-group", containerFactory = "couponKafkaListenerContainerFactory")
-    public void consume(CouponRequestMessage couponMessage) {
+    @KafkaListener(topics = "coupon-issue-topic", groupId = "coupon-group", containerFactory = "kafkaListenerContainerFactory")
+    public void consume(String couponMessage) {
+        CouponRequestMessage couponRequestMessage = null;
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            couponService.processCouponIssue(couponMessage.couponId(), couponMessage.memberId());
+            couponRequestMessage = objectMapper.readValue(couponMessage, CouponRequestMessage.class);
+            couponService.processCouponIssue(couponRequestMessage.couponId(), couponRequestMessage.memberId());
             log.info("쿠폰 발급 처리 성공: {}", couponMessage);
         } catch (Exception e) {
-            log.error("쿠폰 발급 처리 중 예외 발생: {}", e.getMessage());
-            // Redis 수량 롤백
-            couponRedisRepository.increaseCouponQuantity(couponMessage.couponId());
-            // 재처리 로직 또는 DLQ로 메시지 전송 가능
+            if (couponRequestMessage != null) {
+                // Redis 수량 롤백
+                couponRedisRepository.increaseCouponQuantity(couponRequestMessage.couponId());
+                // 재처리 로직 또는 DLQ로 메시지 전송 가능
+            }
         }
     }
 }

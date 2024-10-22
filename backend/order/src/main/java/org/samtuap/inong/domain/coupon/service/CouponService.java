@@ -7,6 +7,7 @@ import org.samtuap.inong.common.exception.BaseCustomException;
 import org.samtuap.inong.domain.coupon.dto.*;
 import org.samtuap.inong.domain.coupon.entity.Coupon;
 import org.samtuap.inong.domain.coupon.entity.MemberCouponRelation;
+import org.samtuap.inong.domain.coupon.producer.CouponProducer;
 import org.samtuap.inong.domain.coupon.repository.CouponRedisRepository;
 import org.samtuap.inong.domain.coupon.repository.CouponRepository;
 import org.samtuap.inong.domain.coupon.repository.MemberCouponRelationRepository;
@@ -26,7 +27,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final MemberCouponRelationRepository memberCouponRelationRepository;
     private final ProductFeign productFeign;
-    private final CouponRedisRepository couponRedisRepository;
+    private final CouponProducer couponProducer;
 
     @Transactional
     public Long createCoupon(Long sellerId, CouponCreateRequest request) {
@@ -37,7 +38,8 @@ public class CouponService {
         Coupon coupon = request.toEntity(request, farm.id());
         couponRepository.save(coupon);
 
-        couponRedisRepository.setCouponQuantity(coupon.getId(), coupon.getQuantity());
+//        couponRedisRepository.setCouponQuantity(coupon.getId(), coupon.getQuantity());
+        couponProducer.setCouponQuantity(coupon.getId(), coupon.getQuantity());
 
         return coupon.getId();
     }

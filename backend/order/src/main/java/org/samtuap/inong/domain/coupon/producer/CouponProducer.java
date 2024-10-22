@@ -1,9 +1,10 @@
 package org.samtuap.inong.domain.coupon.producer;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.domain.coupon.dto.CouponRequestMessage;
 import org.samtuap.inong.domain.coupon.repository.CouponRedisRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
@@ -12,18 +13,13 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CouponProducer {
 
-    private final KafkaTemplate<String, CouponRequestMessage> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final CouponRedisRepository couponRedisRepository;
 
     private static final String TOPIC = "coupon-issue-topic";
-
-    public CouponProducer(@Qualifier("couponKafkaTemplate") KafkaTemplate<String, CouponRequestMessage> kafkaTemplate,
-                          CouponRedisRepository couponRedisRepository) {
-        this.kafkaTemplate = kafkaTemplate;
-        this.couponRedisRepository = couponRedisRepository;
-    }
 
     public void requestCoupon(Long couponId, Long memberId) {
         try {
@@ -40,7 +36,7 @@ public class CouponProducer {
                     .memberId(memberId)
                     .build();
 
-            CompletableFuture<SendResult<String, CouponRequestMessage>> future = kafkaTemplate.send(TOPIC, message);
+            CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(TOPIC, message);
 
             future.whenComplete((result, ex) -> {
                 if (ex == null) {
@@ -56,5 +52,9 @@ public class CouponProducer {
             log.error("쿠폰 발급 요청 중 예외 발생: {}", e.getMessage());
             throw e;
         }
+    }
+
+    public void setCouponQuantity(Long id, Integer quantity) {
+        couponRedisRepository.setCouponQuantity(id, quantity);
     }
 }
