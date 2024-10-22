@@ -77,6 +77,12 @@ public class PackageProductService {
         return PackageProductResponse.fromEntity(packageProduct, packageProductImage);
     }
 
+    public PackageProductResponse getProductInfoNoCache(Long packageProductId) {
+        PackageProduct packageProduct = packageProductRepository.findByIdOrThrow(packageProductId);
+        List<PackageProductImage> packageProductImage = packageProductImageRepository.findAllByPackageProduct(packageProduct);
+        return PackageProductResponse.fromEntity(packageProduct, packageProductImage);
+    }
+
     @Transactional
     public PackageProductCreateResponse createPackageProduct(Long sellerId, PackageProductCreateRequest request) {
         // 농장 조회 후 사용

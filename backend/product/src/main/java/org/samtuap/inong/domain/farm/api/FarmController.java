@@ -45,6 +45,13 @@ public class FarmController {
         return new ResponseEntity<>(farmDetail, HttpStatus.OK);
     }
 
+    @GetMapping("/no-auth/no-cache/detail/{farmId}")
+    public ResponseEntity<FarmDetailGetResponse> getFarmDetailNoCache(@PathVariable Long farmId,
+                                                               @RequestHeader(value = "myId", required = false) Long myId) {
+        FarmDetailGetResponse farmDetail = farmService.getFarmDetailNoCache(farmId);
+        return new ResponseEntity<>(farmDetail, HttpStatus.OK);
+    }
+
 
     // Member -> Feign 요청용 메서드
     @PostMapping("/favorite/list")

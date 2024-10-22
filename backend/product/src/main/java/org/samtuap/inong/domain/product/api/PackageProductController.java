@@ -57,6 +57,11 @@ public class PackageProductController {
         return packageProductService.getProductInfo(packageProductId);
     }
 
+    @GetMapping("/no-auth/no-cache/detail/{id}")
+    public PackageProductResponse getProductInfoNoCache(@PathVariable("id") Long packageProductId) {
+        return packageProductService.getProductInfoNoCache(packageProductId);
+    }
+
     // Feign 요청용 메서드
     @PostMapping("/info")
     List<PackageProductResponse> getPackageProductList(@RequestBody List<Long> ids) {
