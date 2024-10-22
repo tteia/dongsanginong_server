@@ -46,8 +46,6 @@ public class Seller extends BaseEntity {
     @NotNull
     private String addressDetail;
 
-    private String fcmToken;
-
     public void updatePassword(String encodedPassword) {
         this.password = encodedPassword;
     }
