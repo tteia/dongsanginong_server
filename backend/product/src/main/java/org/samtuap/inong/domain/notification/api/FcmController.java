@@ -27,4 +27,11 @@ public class FcmController {
         fcmService.issueNotice(notiRequest);
         return ResponseEntity.ok(null);
     }
+
+    @DeleteMapping("/{token}")
+    public ResponseEntity<Void> deleteFcmToken(@PathVariable("token") String token,
+                                               @RequestHeader("sellerId") Long sellerId) {
+        fcmService.deleteFcmToken(token, sellerId);
+        return ResponseEntity.ok(null);
+    }
 }

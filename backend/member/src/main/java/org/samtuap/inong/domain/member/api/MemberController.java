@@ -41,8 +41,8 @@ public class MemberController {
     }
 
     @PostMapping("/sign-out")
-    public ResponseEntity<SignOutRequest> signOut(@RequestBody final SignOutRequest signOutRequest){
-        memberService.signOut(signOutRequest.memberId());
+    public ResponseEntity<SignOutRequest> signOut(@RequestHeader("myId") Long memberId){
+        memberService.signOut(memberId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

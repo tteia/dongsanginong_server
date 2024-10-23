@@ -15,6 +15,7 @@ import org.samtuap.inong.domain.member.jwt.service.JwtService;
 import org.samtuap.inong.domain.member.oauth.google.service.GoogleService;
 import org.samtuap.inong.domain.member.oauth.kakao.service.KakaoService;
 import org.samtuap.inong.domain.member.repository.MemberRepository;
+import org.samtuap.inong.domain.notification.service.FcmService;
 import org.samtuap.inong.domain.subscription.repository.SubscriptionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
