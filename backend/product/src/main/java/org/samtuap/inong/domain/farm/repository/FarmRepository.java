@@ -38,4 +38,5 @@ public interface FarmRepository extends JpaRepository<Farm, Long> {
 
     // 검색 성능 테스트
     List<Farm> findByFarmNameContainingOrFarmIntroContaining(String farmName, String farmIntro);
+    Page<Farm> findByIdIn(List<Long> farmFavoriteIds, Pageable pageable);
 }

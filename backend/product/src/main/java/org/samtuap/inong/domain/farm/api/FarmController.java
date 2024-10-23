@@ -138,4 +138,16 @@ public class FarmController {
     void increaseLike(@PathVariable("farmId") Long farmId) {
         farmService.increaseLike(farmId);
     }
+
+    /**
+     * 카테고리로 해당하는 농장 목록 가져오기
+     */
+    @GetMapping("/no-auth/farms-by-category")
+    public ResponseEntity<Page<FarmListGetResponse>> searchCategoryFarm(
+                                                @RequestParam("catName") String catName,
+                                                @RequestHeader(value = "myId", required = false) Long myId,
+                                                @PageableDefault(size = 15, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<FarmListGetResponse> catFarmList = farmService.searchCategoryFarm(catName, myId, pageable);
+        return new ResponseEntity<>(catFarmList, HttpStatus.OK);
+    }
 }

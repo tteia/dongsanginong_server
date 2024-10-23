@@ -30,6 +30,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -286,4 +287,35 @@ public class FarmService {
         }
     }
 
+    /**
+     *
+     */
+    public Page<FarmListGetResponse> searchCategoryFarm(String catName, Long myId, Pageable pageable) {
+        FarmCategory category = farmCategoryRepository.findByTitleOrThrow(catName);
+        // 해당 카테고리 id에 해당하는 relation 목록 가져오기
+        List<FarmCategoryRelation> relationList = farmCategoryRelationRepository.findAllByCategory_Id(category.getId());
+
+        // getRelationList의 farm id에 해당하는 농장 정보 가져오기
+        List<Long> farmIds = relationList.stream()
+                .map(FarmCategoryRelation::getFarm)
+                .map(Farm::getId)
+                .toList();
+
+        Page<Farm> farms = farmRepository.findByIdIn(farmIds, pageable);
+
+        return farms.map(farm -> {
+            FavoriteGetResponse favorite;
+            if (myId == null) {
+                favorite = null;
+            } else {
+                favorite = memberFeign.getFavorite(myId, farm.getId());
+            }
+
+            if (favorite == null) {
+                return FarmListGetResponse.fromEntity(farm, false);
+            } else {
+                return FarmListGetResponse.fromEntity(farm, true);
+            }
+        });
+    }
 }
