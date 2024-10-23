@@ -11,7 +11,8 @@ public record FarmListGetResponse(@NotNull Long id,
                                   @NotNull Long favoriteCount,
                                   @NotNull Long orderCount,
                                   @NotNull Boolean isLiked,
-                                  String farmIntro
+                                  String farmIntro,
+                                  String bannerImgUrl
                                   ) {
 
     public static FarmListGetResponse fromEntity(Farm farm, boolean isLiked) {
@@ -23,6 +24,7 @@ public record FarmListGetResponse(@NotNull Long id,
                 .orderCount(farm.getOrderCount())
                 .isLiked(isLiked)
                 .farmIntro(farm.getFarmIntro())
+                .bannerImgUrl(farm.getBannerImageUrl())
                 .build();
     }
 
