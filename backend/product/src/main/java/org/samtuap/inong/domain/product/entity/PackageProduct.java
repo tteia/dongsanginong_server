@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.samtuap.inong.domain.common.BaseEntity;
@@ -50,6 +49,8 @@ public class PackageProduct extends BaseEntity {
     @NotNull
     private Long orderCount;
 
+    private Long discountId; // 할인id
+
     public void updatePackageName(String packageName) {
         this.packageName = packageName;
     }
@@ -76,5 +77,9 @@ public class PackageProduct extends BaseEntity {
 
     public void updateOrderCount(Long orderCount) {
         this.orderCount = orderCount;
+    }
+
+    public void updateDiscountId(Long discountId) {
+        this.discountId = discountId;
     }
 }
