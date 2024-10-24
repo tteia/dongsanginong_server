@@ -28,7 +28,6 @@ public class DiscountScheduler {
         // 현재 날짜와 startAt이 "같은" 할인 목록을 가져와 활성화 처리
         List<Discount> discountsToActivate = discountRepository.findAllByStartAt(now);
         for (Discount discount : discountsToActivate) {
-            log.info("지금부터 할인이 활성화되는 제품 ID: {}", discount.getPackageProduct().getId());
             DiscountUtil.activateDiscount(discount);  // 할인 활성화 (discountActive 필드를 true로 변경)
             discountRepository.save(discount);  // 변경된 할인 정보 저장
         }
@@ -36,7 +35,6 @@ public class DiscountScheduler {
         // 종료일(endAt)이 현재 날짜를 넘은 할인 목록을 가져와 비활성화 처리
         List<Discount> discountsToDeactivate = discountRepository.findAllByEndAtBefore(now);
         for (Discount discount : discountsToDeactivate) {
-            log.info("지금부터 할인이 비활성화되는 제품 ID: {}", discount.getPackageProduct().getId());
             DiscountUtil.deactivateDiscount(discount);  // 할인 비활성화 (discountActive 필드를 false로 변경)
             discountRepository.save(discount);  // 변경된 할인 정보 저장
         }

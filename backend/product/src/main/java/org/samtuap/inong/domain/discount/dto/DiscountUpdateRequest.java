@@ -1,8 +1,6 @@
 package org.samtuap.inong.domain.discount.dto;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 import org.samtuap.inong.domain.discount.entity.Discount;
 
 import java.time.LocalDate;

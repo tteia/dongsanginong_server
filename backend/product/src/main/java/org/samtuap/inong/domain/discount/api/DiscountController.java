@@ -22,12 +22,10 @@ public class DiscountController {
     private final DiscountService discountService;
 
     // 할인 생성
-    @PostMapping("/{packageProductId}/create")
+    @PostMapping("/create")
     public void createDiscount(
-            @PathVariable("packageProductId") Long packageProductId,
-            @RequestHeader("sellerId") Long sellerId,
-            @RequestBody DiscountCreateRequest request) {
-        discountService.createDiscount(packageProductId, request);
+            @RequestHeader("sellerId") Long sellerId, @RequestBody DiscountCreateRequest request) {
+        discountService.createDiscount(request);
     }
 
     // 할인 수정

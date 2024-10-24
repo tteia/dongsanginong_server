@@ -15,7 +15,8 @@ public record PackageProductCreateRequest(
         List<String> imageUrls,
         String productDescription,
         String origin,
-        Long wishCount
+        Long wishCount,
+        Long discountId
 ) {
 
     public static PackageProduct toEntity(Farm farm, PackageProductCreateRequest request) {
@@ -29,6 +30,7 @@ public record PackageProductCreateRequest(
                 .origin(request.origin)
                 .wishCount(0L)
                 .orderCount(0L)
+                .discountId(null)
                 .build();
     }
 }

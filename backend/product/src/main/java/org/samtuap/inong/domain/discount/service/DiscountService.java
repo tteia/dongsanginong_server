@@ -17,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import static org.samtuap.inong.common.exceptionType.ProductExceptionType.*;
 
 @Slf4j
@@ -29,24 +27,27 @@ public class DiscountService {
     private final DiscountRepository discountRepository;
     private final PackageProductRepository packageProductRepository;
 
-    // 할인 생성
+    // 할인 생성 => seller가 할인 등록
     @Transactional
-    public void createDiscount(Long packageProductId, DiscountCreateRequest request) {
-        PackageProduct packageProduct = packageProductRepository.findById(packageProductId)
-                .orElseThrow(() -> new BaseCustomException(PRODUCT_NOT_FOUND));
-
-        // packageProduct 중복 체크 로직 추가
-        boolean discountExists = discountRepository.existsByPackageProduct(packageProduct);
-        if (discountExists) {
-            throw new BaseCustomException(DISCOUNT_ALREADY_EXISTS);
-        }
-        Discount discount = request.toEntity(packageProduct);
+    public void createDiscount(DiscountCreateRequest request) {
+        // discount 엔티티에 할인 등록
+        Discount discount = request.toEntity();
 
         // startAt이 현재 시간보다 뒤에 있으면 활성화 설정
         if (discount.getStartAt().isBefore(LocalDate.now())) {
             discount.updateDiscountActive(true);
         }
         discountRepository.save(discount);
+
+        // packageProduct 엔티티에 discount_id 등록
+        for (Long productId : request.productIdList()) {
+            PackageProduct product = packageProductRepository.findByIdOrThrow(productId);
+            if (product.getDiscountId() == null) { // product의 discountid가 null이면 -> 받아온 discountid 넣기
+                product.updateDiscountId(discount.getId());
+            } else { // null이 아니면 -> 등록할 수 없다고 예외처리
+                throw new BaseCustomException(DISCOUNT_ALREADY_EXISTS);
+            }
+        }
     }
 
     // 할인 수정
@@ -69,11 +70,17 @@ public class DiscountService {
         discountRepository.save(existingDiscount);
     }
 
-    // 할인 삭제
+    // 할인 삭제 => 할인을 삭제하면 product 엔티티에서 discount_id의 상품을 모두 찾아 null로 변경해주고 discount에선 deleted_at 추가
     @Transactional
     public void deleteDiscount(Long discountId) {
         Discount existingDiscount = discountRepository.findById(discountId)
                 .orElseThrow(() -> new BaseCustomException(DISCOUNT_NOT_FOUND));
+
+        // product 엔티티에서 discount_id가 적용된 상품 목록 찾아오기 => discount_id 모두 null로 설정
+        List<PackageProduct> productList = packageProductRepository.findAllByDiscountId(existingDiscount.getId());
+        for (PackageProduct product : productList) {
+            product.updateDiscountId(null);
+        }
         discountRepository.deleteById(existingDiscount.getId());
     }
 

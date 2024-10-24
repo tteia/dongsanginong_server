@@ -40,4 +40,6 @@ public interface PackageProductRepository extends JpaRepository<PackageProduct, 
 
     @Query("SELECT new org.samtuap.inong.domain.product.dto.PackageStatisticResponse(p.id, p.packageName) FROM PackageProduct p WHERE p.id IN :ids")
     List<PackageStatisticResponse> findAllByIdContainDeletedNameOnly(List<Long> ids);
+
+    List<PackageProduct> findAllByDiscountId(Long discountId);
 }
