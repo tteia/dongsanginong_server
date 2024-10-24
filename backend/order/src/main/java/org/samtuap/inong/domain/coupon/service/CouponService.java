@@ -8,7 +8,6 @@ import org.samtuap.inong.domain.coupon.dto.*;
 import org.samtuap.inong.domain.coupon.entity.Coupon;
 import org.samtuap.inong.domain.coupon.entity.MemberCouponRelation;
 import org.samtuap.inong.domain.coupon.producer.CouponProducer;
-import org.samtuap.inong.domain.coupon.repository.CouponRedisRepository;
 import org.samtuap.inong.domain.coupon.repository.CouponRepository;
 import org.samtuap.inong.domain.coupon.repository.MemberCouponRelationRepository;
 import org.samtuap.inong.domain.delivery.dto.FarmDetailGetResponse;
@@ -97,5 +96,14 @@ public class CouponService {
         log.info("line 84 >>>> {}", memberCouponRelations);
         List<AvailableCouponGetResponse> list = memberCouponRelations.stream().map(AvailableCouponGetResponse::fromEntity).toList();
         return new AvailableCouponListGetResponse(list);
+    }
+
+    public Coupon getCoupon(Long couponId) {
+        return couponRepository.findById(couponId)
+                .orElseThrow(() -> new BaseCustomException(COUPON_NOT_FOUND));
+    }
+
+    public boolean isAlreadyDownloaded(Long couponId, Long memberId) {
+        return memberCouponRelationRepository.existsByCouponIdAndMemberId(couponId, memberId);
     }
 }

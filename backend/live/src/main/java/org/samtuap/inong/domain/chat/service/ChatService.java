@@ -4,17 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.common.client.FarmFeign;
 import org.samtuap.inong.common.client.MemberFeign;
+import org.samtuap.inong.common.client.OrderFeign;
 import org.samtuap.inong.common.exception.BaseCustomException;
 import org.samtuap.inong.domain.chat.dto.ChatMessageRequest;
+import org.samtuap.inong.domain.chat.dto.CouponDetailResponse;
 import org.samtuap.inong.domain.chat.dto.KickMessage;
 import org.samtuap.inong.domain.chat.dto.MemberDetailResponse;
 import org.samtuap.inong.domain.chat.kafka.KafkaConstants;
 import org.samtuap.inong.domain.live.dto.FarmDetailGetResponse;
 import org.samtuap.inong.domain.live.entity.Live;
 import org.samtuap.inong.domain.live.repository.LiveRepository;
+import org.samtuap.inong.domain.live.service.LiveService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import static org.samtuap.inong.common.exceptionType.ChatExceptionType.ID_IS_NULL;
@@ -31,7 +33,8 @@ public class ChatService {
     private final FarmFeign farmFeign;
     private final LiveRepository liveRepository;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final OrderFeign orderFeign;
+    private final LiveService liveService;
 
     private static final String KICKED_USERS_KEY_PREFIX = "kicked:users:";
 
@@ -94,6 +97,19 @@ public class ChatService {
             }
         }
 
+        if ("COUPON".equals(messageRequest.type())) {
+            Long couponId = messageRequest.couponId();
+            if (couponId != null) {
+                try {
+                    CouponDetailResponse coupon = orderFeign.getCoupon(couponId);
+                    liveService.saveCoupon(sessionId, coupon);
+                } catch (Exception e) {
+                    log.error("live-service에 쿠폰 등록 중 오류 발생: {}", e.getMessage());
+                }
+            }
+            return;
+        }
+
         // 메시지 전송
         ChatMessageRequest updatedRequest = ChatMessageRequest.builder()
                 .memberId(memberId)
@@ -128,7 +144,7 @@ public class ChatService {
         log.info("{} 강퇴됨: sessionId = {}, userId = {}", userType, sessionId, userId);
 
         KickMessage kickMessage = new KickMessage(userId, "강퇴된 사용자입니다.");
-        messagingTemplate.convertAndSend("/topic/live/" + sessionId + "/kick", kickMessage);
+        liveService.broadcastKickMessage(sessionId, kickMessage);
     }
 
     private boolean isOwner(String sessionId, Long sellerId) {

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.domain.coupon.dto.AvailableCouponListGetResponse;
 import org.samtuap.inong.domain.coupon.dto.CouponCreateRequest;
+import org.samtuap.inong.domain.coupon.dto.CouponDetailResponse;
 import org.samtuap.inong.domain.coupon.dto.MemberCouponListResponse;
 import org.samtuap.inong.domain.coupon.entity.Coupon;
 import org.samtuap.inong.domain.coupon.producer.CouponProducer;
@@ -44,6 +45,9 @@ public class CouponController {
     @PostMapping("/{couponId}/download")
     public ResponseEntity<String> downloadCoupon(@PathVariable("couponId") Long couponId, @RequestHeader("myId") Long memberId) {
         try {
+            if (couponService.isAlreadyDownloaded(couponId, memberId)) {
+                return new ResponseEntity<>("이미 발급 받은 쿠폰입니다.", HttpStatus.BAD_REQUEST);
+            }
             couponProducer.requestCoupon(couponId, memberId);
             return new ResponseEntity<>("쿠폰 발급 신청이 완료되었습니다.", HttpStatus.ACCEPTED);
         } catch (Exception e) {
@@ -65,6 +69,13 @@ public class CouponController {
     public ResponseEntity<AvailableCouponListGetResponse> getAvailableCouponList(@RequestHeader("myId") Long memberId,
                                                                                  @PathVariable("farmId") Long farmId) {
         AvailableCouponListGetResponse response = couponService.getAvailableCouponList(memberId, farmId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{couponId}")
+    public ResponseEntity<CouponDetailResponse> getCoupon(@PathVariable("couponId") Long couponId) {
+        Coupon coupon = couponService.getCoupon(couponId);
+        CouponDetailResponse response = CouponDetailResponse.fromEntity(coupon);
         return ResponseEntity.ok(response);
     }
 }

@@ -10,6 +10,7 @@ public record ChatMessageRequest(
         String name,
         String content,
         boolean isOwner,
-        MessageType type
+        String type,
+        Long couponId
 ) {
 }

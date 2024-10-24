@@ -3,13 +3,15 @@ package org.samtuap.inong.domain.live.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.common.exception.BaseCustomException;
-import org.samtuap.inong.domain.chat.websocket.SocketController;
+import org.samtuap.inong.domain.chat.dto.CouponDetailResponse;
+import org.samtuap.inong.domain.chat.dto.KickMessage;
 import org.samtuap.inong.domain.live.dto.*;
 import org.samtuap.inong.domain.live.entity.Live;
 import org.samtuap.inong.domain.live.repository.LiveRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.samtuap.inong.common.client.FarmFeign;
@@ -33,9 +35,10 @@ public class LiveService {
     private final LiveRepository liveRepository;
     private final FarmFeign farmFeign;
     private final OpenVidu openVidu;
-    private final SocketController socketController;
+    private final SimpMessagingTemplate messagingTemplate;
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String LIVE_PARTICIPANTS_KEY_PREFIX = "live:participants:";
+    private static final String LIVE_COUPON_KEY_PREFIX = "live:coupon:";
 
     /**
      * feign 요청용
@@ -47,7 +50,7 @@ public class LiveService {
         List<FavoritesLiveListResponse> list = new ArrayList<>();
 
         for (Live live: liveList) {
-            int participantCount = socketController.getParticipantCount(live.getSessionId());
+            int participantCount = getParticipantCount(live.getSessionId());
             FavoritesLiveListResponse dto = FavoritesLiveListResponse.from(live, participantCount);
             list.add(dto);
         }
@@ -61,7 +64,7 @@ public class LiveService {
         return activeLiveList.map(live -> {
             FarmResponse farmResponse = farmFeign.getFarmById(live.getFarmId());
             String farmName = farmResponse.farmName();
-            int participantCount = socketController.getParticipantCount(live.getSessionId());
+            int participantCount = getParticipantCount(live.getSessionId());
             return ActiveLiveListGetResponse.fromEntity(live, farmName, participantCount);
         });
     }
@@ -118,7 +121,35 @@ public class LiveService {
 
     public int getParticipantCount(String sessionId) {
         String key = LIVE_PARTICIPANTS_KEY_PREFIX + sessionId;
-        Integer count = (Integer) redisTemplate.opsForValue().get(key);
-        return (count != null) ? count : 0;
+        Object countObj = redisTemplate.opsForValue().get(key);
+        if (countObj instanceof Number) {
+            return ((Number) countObj).intValue();
+        }
+        return 0;
+    }
+
+    @Transactional
+    public void saveCoupon(String sessionId, CouponDetailResponse coupon) {
+        log.debug("Saving coupon: {}", coupon);
+        String key = LIVE_COUPON_KEY_PREFIX + sessionId;
+        redisTemplate.opsForValue().set(key, coupon);
+        redisTemplate.expire(key, 24, TimeUnit.HOURS);
+        log.info("쿠폰 저장: sessionId = {}, coupon = {}", sessionId, coupon);
+        messagingTemplate.convertAndSend("/topic/live/" + sessionId + "/coupon", coupon);
+        log.debug("Sent coupon to WebSocket: /topic/live/{}/coupon", sessionId);
+    }
+
+    public CouponDetailResponse getCoupon(String sessionId) {
+        String key = LIVE_COUPON_KEY_PREFIX + sessionId;
+        Object couponObj = redisTemplate.opsForValue().get(key);
+        if (couponObj instanceof CouponDetailResponse) {
+            return (CouponDetailResponse) couponObj;
+        }
+        return null;
+    }
+
+    public void broadcastKickMessage(String sessionId, KickMessage kickMessage) {
+        messagingTemplate.convertAndSend("/topic/live/" + sessionId + "/kick", kickMessage);
+        log.info("KickMessage 브로드캐스트: sessionId = {}, kickMessage = {}", sessionId, kickMessage);
     }
 }
