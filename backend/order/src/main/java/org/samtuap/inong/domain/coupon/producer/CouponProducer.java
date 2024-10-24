@@ -1,6 +1,5 @@
 package org.samtuap.inong.domain.coupon.producer;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.domain.coupon.dto.CouponRequestMessage;

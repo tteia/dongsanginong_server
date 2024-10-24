@@ -2,6 +2,7 @@ package org.samtuap.inong.domain.live.api;
 
 import lombok.RequiredArgsConstructor;
 
+import org.samtuap.inong.domain.chat.dto.CouponDetailResponse;
 import org.springframework.data.domain.Page;
 import org.samtuap.inong.domain.live.dto.FavoritesLiveListResponse;
 import org.samtuap.inong.domain.live.service.LiveService;
@@ -66,5 +67,15 @@ public class LiveController {
         Page<ActiveLiveListGetResponse> sortedPage = new PageImpl<>(sortedList.subList(start, end), pageable, sortedList.size());
 
         return new ResponseEntity<>(sortedPage, HttpStatus.OK);
+    }
+
+    @PostMapping("/{sessionId}/coupon")
+    public void registerCoupon(@PathVariable("sessionId") String sessionId, @RequestBody CouponDetailResponse coupon) {
+        liveService.saveCoupon(sessionId, coupon);
+    }
+
+    @GetMapping("/{sessionId}/coupon")
+    public CouponDetailResponse getCoupon(@PathVariable("sessionId") String sessionId) {
+        return liveService.getCoupon(sessionId);
     }
 }
