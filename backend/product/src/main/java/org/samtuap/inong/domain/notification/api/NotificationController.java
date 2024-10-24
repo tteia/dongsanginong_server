@@ -17,7 +17,7 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping
-    public ResponseEntity<Page<NotificationGetResponse>> getNotification(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity<Page<NotificationGetResponse>> getNotification(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC, size = 50) Pageable pageable,
                                                                          @RequestParam(value = "unread", required = false) boolean unread,
                                                                          @RequestHeader("sellerId") Long sellerId) {
         Page<NotificationGetResponse> notifications = notificationService.getNotifications(pageable, unread, sellerId);
@@ -27,6 +27,11 @@ public class NotificationController {
     @PostMapping("/read")
     public void readNotifications(@RequestHeader("sellerId") Long sellerId) {
         notificationService.readNotifications(sellerId);
+    }
+
+    @PostMapping("/{notificationId}/read")
+    public void readNotifications(@RequestHeader("sellerId") Long sellerId, @PathVariable("notificationId") Long notificationId) {
+        notificationService.readNotification(sellerId, notificationId);
     }
 
 }

@@ -2,6 +2,7 @@ package org.samtuap.inong.domain.notification.service;
 
 import lombok.RequiredArgsConstructor;
 import org.samtuap.inong.common.client.OrderFeign;
+import org.samtuap.inong.common.exception.BaseCustomException;
 import org.samtuap.inong.domain.farm.entity.Farm;
 import org.samtuap.inong.domain.farm.repository.FarmRepository;
 import org.samtuap.inong.domain.notification.dto.KafkaNotificationRequest;
@@ -18,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static org.samtuap.inong.common.exceptionType.NotificationExceptionType.FORBIDDEN;
+import static org.samtuap.inong.common.exceptionType.NotificationExceptionType.NOTIFICATION_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Service
@@ -59,7 +63,17 @@ public class NotificationService {
             String url = "/seller/delivery-management";
             fcmService.issueMessage(farm.getSellerId(), title, content, url);
         }
+    }
 
+    @Transactional
+    public void readNotification(Long memberId, Long notificationId) {
+        SellerNotification noti = sellerNotificationRepository.findById(notificationId).orElseThrow(() -> new BaseCustomException(NOTIFICATION_NOT_FOUND));
+
+        if(!noti.getSeller().getId().equals(memberId)) {
+            throw new BaseCustomException(FORBIDDEN);
+        }
+
+        noti.updateIsRead(true);
     }
 }
 

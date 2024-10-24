@@ -1,6 +1,8 @@
 package org.samtuap.inong.domain.notification.service;
 
 import lombok.RequiredArgsConstructor;
+import org.samtuap.inong.common.exception.BaseCustomException;
+import org.samtuap.inong.common.exceptionType.NotificationExceptionType;
 import org.samtuap.inong.domain.notification.dto.NotificationGetResponse;
 import org.samtuap.inong.domain.notification.entity.Notification;
 import org.samtuap.inong.domain.notification.repository.NotificationRepository;
@@ -10,6 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+
+import static org.samtuap.inong.common.exceptionType.NotificationExceptionType.FORBIDDEN;
+import static org.samtuap.inong.common.exceptionType.NotificationExceptionType.NOTIFICATION_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Service
@@ -30,5 +36,16 @@ public class NotificationService {
         for (Notification notification : notifications) {
             notification.updateIsRead(true);
         }
+    }
+
+    @Transactional
+    public void readNotification(Long memberId, Long notificationId) {
+        Notification noti = notificationRepository.findById(notificationId).orElseThrow(() -> new BaseCustomException(NOTIFICATION_NOT_FOUND));
+
+        if(!noti.getMember().getId().equals(memberId)) {
+            throw new BaseCustomException(FORBIDDEN);
+        }
+
+        noti.updateIsRead(true);
     }
 }
