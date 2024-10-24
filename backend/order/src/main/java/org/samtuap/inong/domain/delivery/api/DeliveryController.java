@@ -2,18 +2,18 @@ package org.samtuap.inong.domain.delivery.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.samtuap.inong.domain.delivery.dto.BillingNumberCreateRequest;
-import org.samtuap.inong.domain.delivery.dto.DeliveryCompletedListResponse;
-import org.samtuap.inong.domain.delivery.dto.DeliveryUpComingListResponse;
+import org.samtuap.inong.domain.delivery.dto.*;
 import org.samtuap.inong.domain.delivery.service.DeliveryService;
-import org.samtuap.inong.domain.delivery.dto.DeliveryListResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+
 
 
 @RestController
@@ -62,5 +62,12 @@ public class DeliveryController {
                                                                            @RequestHeader("myId") Long memberId) {
         Page<DeliveryListResponse> myOrderDeliveryList = deliveryService.getOrderDeliveryList(pageable, memberId);
         return new ResponseEntity<>(myOrderDeliveryList, HttpStatus.OK);
+    }
+
+    // feign 요청 용
+    @GetMapping("/farm/{farmId}/count")
+    public Long getUpcomingDeliveryCount(@PathVariable("farmId") Long farmId,
+                                         @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        return deliveryService.getDeliveryCount(farmId, date);
     }
 }

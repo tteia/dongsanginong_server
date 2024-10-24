@@ -62,8 +62,20 @@ public class FcmService {
     }
 
     protected void issueMessage(Long sellerId, String title, String content, String url) {
+
+        log.info("line 66 >>> issueMessage, {}, {}, {}, {}", sellerId, title, content, url);
         Seller seller = sellerRepository.findByIdOrThrow(sellerId);
         List<FcmToken> fcmTokens = fcmTokenRepository.findAllBySeller(seller);
+
+        SellerNotification noti = SellerNotification.builder()
+                .title(title)
+                .content(content)
+                .seller(seller)
+                .url(url)
+                .isRead(false)
+                .build();
+
+        sellerNotificationRepository.save(noti);
 
         for (FcmToken fcmToken : fcmTokens) {
             String token = fcmToken.getToken();
@@ -71,16 +83,6 @@ public class FcmService {
             if(token == null || token.isEmpty()) {
                 return;
             }
-
-            SellerNotification noti = SellerNotification.builder()
-                    .title(title)
-                    .content(content)
-                    .seller(seller)
-                    .url(url)
-                    .isRead(false)
-                    .build();
-
-            sellerNotificationRepository.save(noti);
 
             Message message = Message.builder()
                     .setWebpushConfig(WebpushConfig.builder()
@@ -117,6 +119,7 @@ public class FcmService {
         } catch (JsonProcessingException e) {
             throw new BaseCustomException(INVALID_FCM_REQUEST);
         } catch(Exception e) {
+            e.printStackTrace();
             throw new BaseCustomException(FCM_SEND_FAIL);
         }
     }

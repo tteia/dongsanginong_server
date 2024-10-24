@@ -25,4 +25,9 @@ public class NotificationController {
         notificationService.readNotifications(sellerId);
     }
 
+    @PostMapping("/test/delivery-notice")
+    public void testDeliveryNotice() {
+        notificationService.notifyTodayDelivery();
+    }
+
 }

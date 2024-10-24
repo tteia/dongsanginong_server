@@ -145,7 +145,11 @@ public class OrderService {
         // 6. orderCount 증가 이벤트 발행
         kafkaTemplate.send("order-count-topic", new KafkaOrderCountUpdateRequest(packageProduct.farmId(), packageProduct.id(), INCREASE));
 
-        // 7. 알림 발송
+        // 7. subscription payDate 변경 TODO
+
+
+
+        // 8. 알림 발송
         KafkaNotificationRequest notification = KafkaNotificationRequest.builder()
                 .memberId(memberId)
                 .title(packageProduct.packageName() + "상품의 정기 결제가 완료되었어요!")
