@@ -11,7 +11,8 @@ public record PackageProductForSaleListResponse(Long packageId,
                                                 Long farmId,
                                                 String farmName,
                                                 Integer deliveryCycle,
-                                                Long price) {
+                                                Long price,
+                                                Long orderCount) {
 
     public static PackageProductForSaleListResponse fromEntity(PackageProduct packageProduct, String imageUrl, Farm farm){
         return PackageProductForSaleListResponse.builder()
@@ -22,6 +23,7 @@ public record PackageProductForSaleListResponse(Long packageId,
                 .farmName(farm.getFarmName())
                 .deliveryCycle(packageProduct.getDelivery_cycle())
                 .price(packageProduct.getPrice())
+                .orderCount(packageProduct.getOrderCount())
                 .build();
     }
 }
