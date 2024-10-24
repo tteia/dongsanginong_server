@@ -34,4 +34,10 @@ public class NotificationController {
         notificationService.readNotification(sellerId, notificationId);
     }
 
+    // TODO: 테스트 용 API인데, 일단 두었다가 추후 삭제하겠습니다!
+    @PostMapping("/test/delivery-notice")
+    public void testDeliveryNotice() {
+        notificationService.notifyTodayDelivery();
+    }
+
 }
