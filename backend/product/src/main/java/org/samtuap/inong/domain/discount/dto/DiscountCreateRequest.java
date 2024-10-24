@@ -1,5 +1,6 @@
 package org.samtuap.inong.domain.discount.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.samtuap.inong.domain.discount.entity.Discount;
@@ -7,19 +8,12 @@ import org.samtuap.inong.domain.product.entity.PackageProduct;
 
 import java.time.LocalDate;
 
-@Setter
-@Getter
-public class DiscountCreateRequest {
-    private Integer discount;
-    private LocalDate startAt;
-    private LocalDate endAt;
-
-    public DiscountCreateRequest(Integer discount, LocalDate startAt, LocalDate endAt) {
-        this.discount = discount;
-        this.startAt = startAt;
-        this.endAt = endAt;
-    }
-
+@Builder
+public record DiscountCreateRequest(
+         Integer discount,
+         LocalDate startAt,
+         LocalDate endAt
+) {
     public Discount toEntity(PackageProduct packageProduct) {
         return Discount.builder()
                 .discount(this.discount)

@@ -6,11 +6,11 @@ public class DiscountUtil {
 
     // 할인 활성화 메서드
     public static void activateDiscount(Discount discount) {
-        discount.setDiscountActive(true);
+        discount.updateDiscountActive(true);
     }
 
     // 할인 비활성화 메서드
     public static void deactivateDiscount(Discount discount) {
-        discount.setDiscountActive(false);
+        discount.updateDiscountActive(false);
     }
 }

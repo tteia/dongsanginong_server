@@ -5,10 +5,14 @@ import org.samtuap.inong.domain.discount.dto.DiscountCreateRequest;
 import org.samtuap.inong.domain.discount.dto.DiscountResponse;
 import org.samtuap.inong.domain.discount.dto.DiscountUpdateRequest;
 import org.samtuap.inong.domain.discount.service.DiscountService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/discounts")
@@ -19,40 +23,40 @@ public class DiscountController {
 
     // 할인 생성
     @PostMapping("/{packageProductId}/create")
-    public ResponseEntity<DiscountResponse> createDiscount(
+    public void createDiscount(
             @PathVariable("packageProductId") Long packageProductId,
+            @RequestHeader("sellerId") Long sellerId,
             @RequestBody DiscountCreateRequest request) {
-        DiscountResponse createdDiscount = discountService.createDiscount(packageProductId, request);
-        return ResponseEntity.ok(createdDiscount);
+        discountService.createDiscount(packageProductId, request);
     }
 
     // 할인 수정
     @PutMapping("/{discountId}/update")
-    public ResponseEntity<DiscountResponse> updateDiscount(
+    public void updateDiscount(
             @PathVariable("discountId") Long discountId,
+            @RequestHeader("sellerId") Long sellerId,
             @RequestBody DiscountUpdateRequest request) {
-        DiscountResponse updatedDiscount = discountService.updateDiscount(discountId, request);
-        return ResponseEntity.ok(updatedDiscount);
+        discountService.updateDiscount(discountId, request);
     }
 
     // 할인 삭제
     @DeleteMapping("/{discountId}/delete")
-    public ResponseEntity<Void> deleteDiscount(@PathVariable("discountId") Long discountId) {
+    public void deleteDiscount(
+            @PathVariable("discountId") Long discountId,
+            @RequestHeader("sellerId") Long sellerId) {
         discountService.deleteDiscount(discountId);
-        return ResponseEntity.noContent().build();
     }
 
     // 할인 리스트 조회
     @GetMapping("/list")
-    public ResponseEntity<List<DiscountResponse>> getDiscountList() {
-        List<DiscountResponse> discountList = discountService.getDiscountList();
-        return ResponseEntity.ok(discountList);
+    public ResponseEntity<Page<DiscountResponse>> getDiscountList(
+            @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return new ResponseEntity<>(discountService.getDiscountList(pageable), HttpStatus.OK);
     }
 
     // 할인 디테일 조회
     @GetMapping("/{discountId}/detail")
     public ResponseEntity<DiscountResponse> getDiscountDetail(@PathVariable("discountId") Long discountId) {
-        DiscountResponse discountDetail = discountService.getDiscountDetail(discountId);
-        return ResponseEntity.ok(discountDetail);
+        return new ResponseEntity<>(discountService.getDiscountDetail(discountId), HttpStatus.OK);
     }
 }

@@ -1,26 +1,29 @@
 package org.samtuap.inong.domain.discount.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.samtuap.inong.domain.discount.entity.Discount;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
-public class DiscountResponse {
-    private Long id;
-    private Integer discount;
-    private LocalDate startAt;
-    private LocalDate endAt;
-    private boolean discountActive;
-    private Long packageProductId;
-
-    public DiscountResponse(Long id, Integer discount, LocalDate startAt, LocalDate endAt, boolean discountActive, Long packageProductId) {
-        this.id = id;
-        this.discount = discount;
-        this.startAt = startAt;
-        this.endAt = endAt;
-        this.discountActive = discountActive;
-        this.packageProductId = packageProductId;
+@Builder
+public record DiscountResponse(
+         Long id,
+         Integer discount,
+         LocalDate startAt,
+         LocalDate endAt,
+         boolean discountActive,
+         Long packageProductId
+) {
+    public static DiscountResponse fromEntity(Discount discount) {
+        return DiscountResponse.builder()
+                .id(discount.getId())
+                .discount(discount.getDiscount())
+                .startAt(discount.getStartAt())
+                .endAt(discount.getEndAt())
+                .discountActive(discount.isDiscountActive())
+                .packageProductId(discount.getPackageProduct().getId())
+                .build();
     }
 }
