@@ -113,7 +113,6 @@ public class FcmService {
         try {
             KafkaNotificationRequest notificationRequest = objectMapper.readValue(message, KafkaNotificationRequest.class);
             Farm farm = farmRepository.findByIdOrThrow(notificationRequest.memberId());
-            log.info("line 101 {}", notificationRequest);
             this.issueMessage(farm.getSellerId(), notificationRequest.title(), notificationRequest.content(), notificationRequest.url());
         } catch (JsonProcessingException e) {
             throw new BaseCustomException(INVALID_FCM_REQUEST);
