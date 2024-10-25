@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.domain.discount.dto.DiscountUtil;
 import org.samtuap.inong.domain.discount.entity.Discount;
 import org.samtuap.inong.domain.discount.repository.DiscountRepository;
+import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -18,6 +20,7 @@ import java.util.List;
 public class DiscountScheduler {
 
     private final DiscountRepository discountRepository;
+    private final CacheManager cacheManager;
 
     // 자정마다 실행되도록 스케줄러 설정 (매일 0시 0분 0초에 실행)
     @Scheduled(cron = "0 0 0 * * ?")
@@ -38,5 +41,7 @@ public class DiscountScheduler {
             DiscountUtil.deactivateDiscount(discount);  // 할인 비활성화 (discountActive 필드를 false로 변경)
             discountRepository.save(discount);  // 변경된 할인 정보 저장
         }
+
+        Objects.requireNonNull(cacheManager.getCache("PackageDetail")).clear();
     }
 }

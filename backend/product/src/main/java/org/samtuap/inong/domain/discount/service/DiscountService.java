@@ -10,6 +10,7 @@ import org.samtuap.inong.domain.discount.entity.Discount;
 import org.samtuap.inong.domain.discount.repository.DiscountRepository;
 import org.samtuap.inong.domain.product.entity.PackageProduct;
 import org.samtuap.inong.domain.product.repository.PackageProductRepository;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class DiscountService {
 
     private final DiscountRepository discountRepository;
     private final PackageProductRepository packageProductRepository;
+    private final CacheManager cacheManager;
 
     // 할인 생성 => seller가 할인 등록
     @Transactional
@@ -47,6 +49,7 @@ public class DiscountService {
             } else { // null이 아니면 -> 등록할 수 없다고 예외처리
                 throw new BaseCustomException(DISCOUNT_ALREADY_EXISTS);
             }
+            cacheManager.getCache("PackageDetail").evict(productId);
         }
     }
 
@@ -55,7 +58,6 @@ public class DiscountService {
     public void updateDiscount(Long discountId, DiscountUpdateRequest request) {
         Discount existingDiscount = discountRepository.findById(discountId)
                 .orElseThrow(() -> new BaseCustomException(DISCOUNT_NOT_FOUND));
-
         request.updateEntity(existingDiscount);
 
         // startAt이 현재 시간보다 뒤에 있거나 오늘 날짜로 설정하면 활성화
@@ -66,6 +68,13 @@ public class DiscountService {
         } else {
             log.info(">>>>날짜 : " + existingDiscount.getStartAt() + " >>>> 오늘보다 이후 => 비활성화");
             existingDiscount.updateDiscountActive(false);
+        }
+        // 변경된 할인이 적용된 상품의 캐시 삭제 처리
+        List<PackageProduct> discountProducts = packageProductRepository.findAllByDiscountId(discountId);
+        if(!discountProducts.isEmpty()){
+            for (PackageProduct product : discountProducts) {
+                cacheManager.getCache("PackageDetail").evict(product.getId());
+            }
         }
         discountRepository.save(existingDiscount);
     }
@@ -80,6 +89,7 @@ public class DiscountService {
         List<PackageProduct> productList = packageProductRepository.findAllByDiscountId(existingDiscount.getId());
         for (PackageProduct product : productList) {
             product.updateDiscountId(null);
+            cacheManager.getCache("PackageDetail").evict(product.getId());
         }
         discountRepository.deleteById(existingDiscount.getId());
     }
