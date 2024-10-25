@@ -18,6 +18,8 @@ import org.samtuap.inong.domain.product.entity.PackageProductImage;
 import org.samtuap.inong.domain.product.repository.PackageProductImageRepository;
 import org.samtuap.inong.domain.product.repository.PackageProductRepository;
 import org.samtuap.inong.search.service.PackageProductSearchService;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,9 +28,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.samtuap.inong.common.exceptionType.ProductExceptionType.*;
@@ -44,6 +44,7 @@ public class PackageProductService {
     private final PackageProductImageService packageProductImageService;
     private final PackageProductSearchService packageProductSearchService;
     private final DiscountRepository discountRepository;
+    private final CacheManager cacheManager;
 
     public List<TopPackageGetResponse> getTopPackages() {
         List<Long> topPackages = orderFeign.getTopPackages();
@@ -147,6 +148,15 @@ public class PackageProductService {
         }
         packageProductRepository.delete(packageProduct);
 
+        Cache productCache = cacheManager.getCache("PackageDetail");
+        Object cachedProduct = Optional.ofNullable(productCache)
+                .map(cache -> cache.get(packageId))
+                .map(Cache.ValueWrapper::get)
+                .orElse(null);
+        if (cachedProduct != null) {
+            productCache.evict(packageId);
+        }
+
         // elasticsearch✔️ : 삭제
 //        packageProductSearchService.deleteProduct(String.valueOf(packageId));
     }
@@ -166,6 +176,15 @@ public class PackageProductService {
 
         // 수정된 상품 정보 저장
         packageProductRepository.save(packageProduct);
+
+        Cache productCache = cacheManager.getCache("PackageDetail");
+        Object cachedProduct = Optional.ofNullable(productCache)
+                .map(cache -> cache.get(packageId))
+                .map(Cache.ValueWrapper::get)
+                .orElse(null);
+        if (cachedProduct != null) {
+            productCache.evict(packageId);
+        }
 
         // elasticsearch✔️ : open search에 수정
 //        PackageProductDocument updateProduct = PackageProductDocument.convertToDocument(packageProduct);
