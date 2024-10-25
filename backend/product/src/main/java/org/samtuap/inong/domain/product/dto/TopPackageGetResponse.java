@@ -2,6 +2,7 @@ package org.samtuap.inong.domain.product.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import org.samtuap.inong.domain.discount.entity.Discount;
 import org.samtuap.inong.domain.product.entity.PackageProduct;
 
 @Builder
@@ -12,9 +13,12 @@ public record TopPackageGetResponse(@NotNull Long id,
                                     String imageUrl,
                                     @NotNull Long price,
                                     Long orderCount,
-                                    @NotNull Integer deliveryCycle) {
+                                    @NotNull Integer deliveryCycle,
+                                    Long discountId,
+                                    Integer discount,
+                                    boolean discountActive) {
 
-    public static TopPackageGetResponse fromEntity(PackageProduct packageProduct, String thumbnailUrl, Long orderCount) {
+    public static TopPackageGetResponse fromEntity(PackageProduct packageProduct, String thumbnailUrl, Long orderCount, Integer discount, boolean discountActive) {
         return TopPackageGetResponse.builder()
                 .id(packageProduct.getId())
                 .packageName(packageProduct.getPackageName())
@@ -24,6 +28,9 @@ public record TopPackageGetResponse(@NotNull Long id,
                 .price(packageProduct.getPrice())
                 .orderCount(orderCount)
                 .deliveryCycle(packageProduct.getDelivery_cycle())
+                .discountId(packageProduct.getDiscountId())
+                .discount(discount)
+                .discountActive(discountActive)
                 .build();
     }
 

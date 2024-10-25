@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.common.client.OrderFeign;
 import org.samtuap.inong.common.exception.BaseCustomException;
+import org.samtuap.inong.domain.discount.entity.Discount;
+import org.samtuap.inong.domain.discount.repository.DiscountRepository;
 import org.samtuap.inong.domain.farm.entity.Farm;
 import org.samtuap.inong.domain.farm.repository.FarmRepository;
 import org.samtuap.inong.domain.product.dto.*;
@@ -41,6 +43,7 @@ public class PackageProductService {
     private final FarmRepository farmRepository;
     private final PackageProductImageService packageProductImageService;
     private final PackageProductSearchService packageProductSearchService;
+    private final DiscountRepository discountRepository;
 
     public List<TopPackageGetResponse> getTopPackages() {
         List<Long> topPackages = orderFeign.getTopPackages();
@@ -52,8 +55,15 @@ public class PackageProductService {
                     if(firstByPackageProduct == null) {
                         throw new BaseCustomException(PRODUCT_IMAGE_NOT_FOUND);
                     }
-                    Long counts = orderFeign.getAllOrders(product.getId());
-                    return TopPackageGetResponse.fromEntity(product, firstByPackageProduct.getImageUrl(), counts);
+                    // discount 정보 가져오기
+                    if (product.getDiscountId() != null) {
+                        Discount discount = discountRepository.findByIdThrow(product.getDiscountId());
+                        Long counts = orderFeign.getAllOrders(product.getId());
+                        return TopPackageGetResponse.fromEntity(product, firstByPackageProduct.getImageUrl(), counts, discount.getDiscount(), discount.isDiscountActive());
+                    } else {
+                        Long counts = orderFeign.getAllOrders(product.getId());
+                        return TopPackageGetResponse.fromEntity(product, firstByPackageProduct.getImageUrl(), counts, null, false);
+                    }
                 })
                 .sorted(Comparator.comparingInt(product -> topPackages.indexOf(product.id())))
                 .collect(Collectors.toList());
@@ -65,7 +75,12 @@ public class PackageProductService {
             PackageProductImage packageProductImage = packageProductImageRepository.findFirstByPackageProduct(packageProduct);
             String imageUrl = packageProductImage.getImageUrl();
             Long orderCount = orderFeign.getAllOrders(packageProduct.getId());
-            return AllPackageListResponse.fromEntity(packageProduct, imageUrl, orderCount);
+            if (packageProduct.getDiscountId() != null) {
+                Discount discount = discountRepository.findByIdThrow(packageProduct.getDiscountId());
+                return AllPackageListResponse.fromEntity(packageProduct, imageUrl, orderCount, discount.getDiscount(), discount.isDiscountActive());
+            } else {
+                return AllPackageListResponse.fromEntity(packageProduct, imageUrl, orderCount, null, false);
+            }
         });
         return productList;
     }
@@ -74,13 +89,24 @@ public class PackageProductService {
     public PackageProductResponse getProductInfo(Long packageProductId) {
         PackageProduct packageProduct = packageProductRepository.findByIdOrThrow(packageProductId);
         List<PackageProductImage> packageProductImage = packageProductImageRepository.findAllByPackageProduct(packageProduct);
-        return PackageProductResponse.fromEntity(packageProduct, packageProductImage);
+
+        if (packageProduct.getDiscountId() != null) {
+            Discount discount = discountRepository.findByIdThrow(packageProduct.getDiscountId());
+            return PackageProductResponse.fromEntity(packageProduct, packageProductImage, discount.getDiscount(), discount.isDiscountActive());
+        } else {
+            return PackageProductResponse.fromEntity(packageProduct, packageProductImage, null, false);
+        }
     }
 
     public PackageProductResponse getProductInfoNoCache(Long packageProductId) {
         PackageProduct packageProduct = packageProductRepository.findByIdOrThrow(packageProductId);
         List<PackageProductImage> packageProductImage = packageProductImageRepository.findAllByPackageProduct(packageProduct);
-        return PackageProductResponse.fromEntity(packageProduct, packageProductImage);
+        if (packageProduct.getDiscountId() != null) {
+            Discount discount = discountRepository.findByIdThrow(packageProduct.getDiscountId());
+            return PackageProductResponse.fromEntity(packageProduct, packageProductImage, discount.getDiscount(), discount.isDiscountActive());
+        } else {
+            return PackageProductResponse.fromEntity(packageProduct, packageProductImage, null, false);
+        }
     }
 
     @Transactional
@@ -149,14 +175,26 @@ public class PackageProductService {
     // Feign 요청 용
     public List<PackageProductResponse> getProductInfoList(List<Long> ids) {
         List<PackageProduct> packageProducts = packageProductRepository.findAllById(ids);
-        return packageProducts.stream()
-                .map(p -> PackageProductResponse.fromEntity(p, new ArrayList<>())).toList();
+        return packageProducts.stream().map(p -> {
+                    if (p.getDiscountId() != null) {
+                        Discount discount = discountRepository.findByIdThrow(p.getDiscountId());
+                        return PackageProductResponse.fromEntity(p, new ArrayList<>(), discount.getDiscount(), discount.isDiscountActive());
+                    } else {
+                        return PackageProductResponse.fromEntity(p, new ArrayList<>(), null, false);
+                    }
+                }).toList();
     }
 
     public List<PackageProductResponse> getProductInfoListContainDeleted(List<Long> ids) {
         List<PackageProduct> packageProducts = packageProductRepository.findAllByIdContainDeleted(ids);
-        return packageProducts.stream()
-                .map(p -> PackageProductResponse.fromEntity(p, new ArrayList<>())).toList();
+        return packageProducts.stream().map(p -> {
+                    if (p.getDiscountId() != null) {
+                        Discount discount = discountRepository.findByIdThrow(p.getDiscountId());
+                        return PackageProductResponse.fromEntity(p, new ArrayList<>(), discount.getDiscount(), discount.isDiscountActive());
+                    } else {
+                        return PackageProductResponse.fromEntity(p, new ArrayList<>(), null, false);
+                    }
+                }).toList();
     }
 
     public List<PackageStatisticResponse> getProductInfoListContainDeletedNameOnly(List<Long> ids) {
@@ -223,7 +261,13 @@ public class PackageProductService {
             PackageProductImage packageProductImage = packageProductImageRepository.findFirstByPackageProduct(packageProduct);
             String imageUrl = packageProductImage.getImageUrl();
             Long orderCount = orderFeign.getAllOrders(packageProduct.getId());
-            return AllPackageListResponse.fromEntity(packageProduct, imageUrl, orderCount);
+
+            if (packageProduct.getDiscountId() != null) {
+                Discount discount = discountRepository.findByIdThrow(packageProduct.getDiscountId());
+                return AllPackageListResponse.fromEntity(packageProduct, imageUrl, orderCount, discount.getDiscount(), discount.isDiscountActive());
+            } else {
+                return AllPackageListResponse.fromEntity(packageProduct, imageUrl, orderCount, null, false);
+            }
         });
         return productList;
     }
