@@ -33,6 +33,8 @@ public interface PackageProductRepository extends JpaRepository<PackageProduct, 
 
     List<PackageProduct> findAllByFarmId(Long farmId);
 
+    Page<PackageProduct> findAllByFarmId(Long farmId, Pageable pageable);
+
     @Query(value = "SELECT f FROM Farm f ORDER BY f.id DESC LIMIT :n", nativeQuery = true)
     List<PackageProductImage> findNPackageProducts(@Param("n") Long n);
 
@@ -42,4 +44,6 @@ public interface PackageProductRepository extends JpaRepository<PackageProduct, 
     List<PackageStatisticResponse> findAllByIdContainDeletedNameOnly(List<Long> ids);
 
     List<PackageProduct> findAllByDiscountId(Long discountId);
+
+    Page<PackageProduct> findAllByFarmIdAndDiscountIdIsNotNull(Long farmId, Pageable pageable);
 }

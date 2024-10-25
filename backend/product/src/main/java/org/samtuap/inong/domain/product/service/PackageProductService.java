@@ -17,6 +17,8 @@ import org.samtuap.inong.domain.product.entity.PackageProduct;
 import org.samtuap.inong.domain.product.entity.PackageProductImage;
 import org.samtuap.inong.domain.product.repository.PackageProductImageRepository;
 import org.samtuap.inong.domain.product.repository.PackageProductRepository;
+import org.samtuap.inong.domain.seller.entity.Seller;
+import org.samtuap.inong.domain.seller.repository.SellerRepository;
 import org.samtuap.inong.search.service.PackageProductSearchService;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -27,7 +29,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,8 @@ public class PackageProductService {
     private final PackageProductSearchService packageProductSearchService;
     private final DiscountRepository discountRepository;
     private final CacheManager cacheManager;
+    private final SellerRepository sellerRepository;
+
 
     public List<TopPackageGetResponse> getTopPackages() {
         List<Long> topPackages = orderFeign.getTopPackages();
@@ -233,15 +236,15 @@ public class PackageProductService {
     }
 
     @Transactional
-    public List<PackageProductForSaleListResponse> getForSalePackageProduct(Long farmId) {
-        List<PackageProduct> packageProducts = packageProductRepository.findAllByFarmId(farmId);
-        return packageProducts.stream()
-                .map(p -> {
-                    String imageUrl = packageProductImageRepository.findFirstByPackageProduct(p).getImageUrl();
-                    Farm farm = farmRepository.findByIdOrThrow(p.getFarm().getId());
-                    return PackageProductForSaleListResponse.fromEntity(p, imageUrl, farm);
-                })
-                .collect(Collectors.toList());
+    public Page<PackageProductForSaleListResponse> getForSalePackageProduct(Long farmId, Pageable pageable) {
+        Page<PackageProduct> packageProducts = packageProductRepository.findAllByFarmId(farmId, pageable);
+
+        return packageProducts.map(p -> {
+            PackageProductImage image = packageProductImageRepository.findFirstByPackageProduct(p);
+            String imageUrl = (image != null) ? image.getImageUrl() : "default-image-url";
+            Farm farm = farmRepository.findByIdOrThrow(p.getFarm().getId());
+            return PackageProductForSaleListResponse.fromEntity(p, imageUrl, farm);
+        });
     }
     // cache 처리 전 메서드 (테스트용)
     @Transactional
@@ -304,5 +307,22 @@ public class PackageProductService {
     public void decreaseWish(Long packageProductId) {
         PackageProduct packageProduct = packageProductRepository.findByIdOrThrow(packageProductId);
         packageProduct.updateWishCount(packageProduct.getWishCount() - 1);
+    }
+
+    /**
+     * 할인건이 있는 상품 목록 출력
+     */
+    public Page<PackageProductDiscountResponse> discountProductList(Long sellerId, Pageable pageable) {
+        // seller 가져오기
+        Seller seller = sellerRepository.findByIdOrThrow(sellerId);
+        // 해당 seller의 farm 가져오기
+        Farm farm = farmRepository.findBySellerIdOrThrow(seller.getId());
+        // 해당 farm의 모든 packgelist 가져오기
+        Page<PackageProduct> discountPackageList = packageProductRepository.findAllByFarmIdAndDiscountIdIsNotNull(farm.getId(), pageable);
+
+        return discountPackageList.map(discountPackage -> {
+            Discount discount = discountRepository.findByIdThrow(discountPackage.getDiscountId());
+            return PackageProductDiscountResponse.from(discountPackage, discount);
+        });
     }
 }
