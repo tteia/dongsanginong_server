@@ -35,5 +35,4 @@ public class NotificationController {
     public void readNotifications(@RequestHeader("myId") Long memberId, @PathVariable("notificationId") Long notificationId) {
         notificationService.readNotification(memberId, notificationId);
     }
-
 }
