@@ -2,6 +2,7 @@ package org.samtuap.inong.domain.coupon.producer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.samtuap.inong.common.exception.BaseCustomException;
 import org.samtuap.inong.domain.coupon.dto.CouponRequestMessage;
 import org.samtuap.inong.domain.coupon.repository.CouponRedisRepository;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -9,6 +10,9 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
+
+import static org.samtuap.inong.common.exceptionType.CouponExceptionType.COUPON_NOT_FOUND;
+import static org.samtuap.inong.common.exceptionType.CouponExceptionType.COUPON_SOLD_OUT;
 
 @Slf4j
 @Component
@@ -25,8 +29,12 @@ public class CouponProducer {
             // Redis에서 쿠폰 수량 감소
             Long remainQuantity = couponRedisRepository.decreaseCouponQuantity(couponId);
 
-            if (remainQuantity == null || remainQuantity < 0) {
-                throw new RuntimeException("쿠폰이 소진되었습니다.");
+            if (remainQuantity == null) {
+                throw new BaseCustomException(COUPON_NOT_FOUND);
+            }
+
+            if (remainQuantity < 0 && remainQuantity != -1) {
+                throw new BaseCustomException(COUPON_SOLD_OUT);
             }
 
             // Kafka에 메시지 전송

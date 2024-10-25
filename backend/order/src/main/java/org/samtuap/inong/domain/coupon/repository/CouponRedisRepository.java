@@ -23,11 +23,19 @@ public class CouponRedisRepository {
 
     public Long decreaseCouponQuantity(Long couponId) {
         String key = getCouponQuantityKey(couponId);
+        String currentValue = redisTemplate.opsForValue().get(key);
+        if ("-1".equals(currentValue)) {
+            return -1L;
+        }
         return redisTemplate.opsForValue().decrement(key);
     }
 
     public Long increaseCouponQuantity(Long couponId) {
         String key = getCouponQuantityKey(couponId);
+        String currentValue = redisTemplate.opsForValue().get(key);
+        if ("-1".equals(currentValue)) {
+            return -1L;
+        }
         return redisTemplate.opsForValue().increment(key);
     }
 
