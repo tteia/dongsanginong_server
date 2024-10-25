@@ -88,8 +88,9 @@ public class PackageProductController {
     }
 
     @GetMapping("/no-auth/for-sale/{id}")
-    public List<PackageProductForSaleListResponse> getForSalePackageProduct(@PathVariable("id") Long farmId) {
-        return packageProductService.getForSalePackageProduct(farmId);
+    public Page<PackageProductForSaleListResponse> getForSalePackageProduct(@PathVariable("id") Long farmId,
+                                                                             @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return packageProductService.getForSalePackageProduct(farmId, pageable);
     }
 
     @GetMapping("/no-auth")
