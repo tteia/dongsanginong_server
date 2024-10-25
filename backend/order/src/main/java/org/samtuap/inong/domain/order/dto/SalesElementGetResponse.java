@@ -19,7 +19,9 @@ public record SalesElementGetResponse(Long orderId,
                                       Long discountAmount,
                                       Long beforeAmount,
                                       Long customerId,
-                                      String customerName) {
+                                      String customerName,
+                                      String orderNumber
+                                      ) {
     public static SalesElementGetResponse fromEntity(Receipt receipt, PackageProductResponse packageProduct, MemberDetailResponse memberDetail) {
         return SalesElementGetResponse.builder()
                 .orderId(receipt.getOrder().getId())
@@ -31,6 +33,7 @@ public record SalesElementGetResponse(Long orderId,
                 .paidAmount(receipt.getTotalPrice())
                 .discountAmount(receipt.getDiscountPrice())
                 .beforeAmount(receipt.getBeforePrice())
+                .orderNumber(receipt.getOrder().getOrderNumber())
                 .build();
     }
 }

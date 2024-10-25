@@ -13,7 +13,8 @@ public record OrderPaymentListResponse(Long receiptId,
                                        String farmName,
                                        String orderAt,
                                        String paymentMethod,
-                                       Long totalPrice) {
+                                       Long totalPrice,
+                                       String orderNumber) {
     public static OrderPaymentListResponse from(Ordering ordering, PackageProductResponse product, Receipt receipt) {
         return OrderPaymentListResponse.builder()
                 .receiptId(receipt.getId())
@@ -24,6 +25,7 @@ public record OrderPaymentListResponse(Long receiptId,
                 .orderAt(ordering.getCreatedAt().toString())
                 .paymentMethod(receipt.getPaymentMethodType().toString())
                 .totalPrice(receipt.getTotalPrice())
+                .orderNumber(ordering.getOrderNumber())
                 .build();
     }
 }

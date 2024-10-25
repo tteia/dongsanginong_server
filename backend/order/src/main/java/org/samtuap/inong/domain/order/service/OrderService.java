@@ -122,6 +122,7 @@ public class OrderService {
                 .packageId(reqDto.packageId())
                 .farmId(packageProduct.farmId())
                 .isFirst(isFirst)
+                .orderNumber(LocalDate.now() + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .build();
 
         Ordering savedOrder = orderRepository.save(order);

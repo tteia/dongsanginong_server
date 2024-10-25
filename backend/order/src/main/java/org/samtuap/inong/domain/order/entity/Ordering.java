@@ -43,6 +43,9 @@ public class Ordering extends BaseEntity {
     @NotNull
     private boolean isFirst;
 
+    @NotNull
+    private String orderNumber;
+
     public void updateCanceledAt(LocalDateTime canceledAt) {
         this.canceledAt = canceledAt;
     }
