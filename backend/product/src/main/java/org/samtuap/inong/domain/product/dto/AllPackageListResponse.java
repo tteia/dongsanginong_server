@@ -10,9 +10,12 @@ public record AllPackageListResponse(@NotNull Long id,
                                      @NotNull String imageUrl,
                                      @NotNull Long orderCount,
                                      @NotNull Integer deliveryCycle,
-                                     @NotNull Long price
+                                     @NotNull Long price,
+                                     Long discountId,
+                                     Integer discount,
+                                     boolean discountActive
                                      ) {
-    public static AllPackageListResponse fromEntity(PackageProduct product, String imageUrl, Long orderCount){
+    public static AllPackageListResponse fromEntity(PackageProduct product, String imageUrl, Long orderCount, Integer discount, boolean discountActive){
         return AllPackageListResponse.builder()
                 .id(product.getId())
                 .packageName(product.getPackageName())
@@ -20,6 +23,9 @@ public record AllPackageListResponse(@NotNull Long id,
                 .orderCount(orderCount)
                 .deliveryCycle(product.getDelivery_cycle())
                 .price(product.getPrice())
+                .discountId(product.getDiscountId())
+                .discount(discount)
+                .discountActive(discountActive)
                 .build();
     }
 }
