@@ -17,6 +17,8 @@ import org.samtuap.inong.domain.product.entity.PackageProduct;
 import org.samtuap.inong.domain.product.entity.PackageProductImage;
 import org.samtuap.inong.domain.product.repository.PackageProductImageRepository;
 import org.samtuap.inong.domain.product.repository.PackageProductRepository;
+import org.samtuap.inong.domain.seller.entity.Seller;
+import org.samtuap.inong.domain.seller.repository.SellerRepository;
 import org.samtuap.inong.search.service.PackageProductSearchService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.samtuap.inong.common.exceptionType.ProductExceptionType.*;
@@ -44,6 +47,8 @@ public class PackageProductService {
     private final PackageProductImageService packageProductImageService;
     private final PackageProductSearchService packageProductSearchService;
     private final DiscountRepository discountRepository;
+    private final SellerRepository sellerRepository;
+
 
     public List<TopPackageGetResponse> getTopPackages() {
         List<Long> topPackages = orderFeign.getTopPackages();
@@ -285,5 +290,22 @@ public class PackageProductService {
     public void decreaseWish(Long packageProductId) {
         PackageProduct packageProduct = packageProductRepository.findByIdOrThrow(packageProductId);
         packageProduct.updateWishCount(packageProduct.getWishCount() - 1);
+    }
+
+    /**
+     * 할인건이 있는 상품 목록 출력
+     */
+    public Page<PackageProductDiscountResponse> discountProductList(Long sellerId, Pageable pageable) {
+        // seller 가져오기
+        Seller seller = sellerRepository.findByIdOrThrow(sellerId);
+        // 해당 seller의 farm 가져오기
+        Farm farm = farmRepository.findBySellerIdOrThrow(seller.getId());
+        // 해당 farm의 모든 packgelist 가져오기
+        Page<PackageProduct> discountPackageList = packageProductRepository.findAllByFarmIdAndDiscountIdIsNotNull(farm.getId(), pageable);
+
+        return discountPackageList.map(discountPackage -> {
+            Discount discount = discountRepository.findByIdThrow(discountPackage.getDiscountId());
+            return PackageProductDiscountResponse.from(discountPackage, discount);
+        });
     }
 }
