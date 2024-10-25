@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
@@ -113,5 +114,15 @@ public class PackageProductController {
     @PostMapping("/{packageProductId}/decrease-wish")
     void decreaseWish(@PathVariable("packageProductId") Long packageProductId) {
         packageProductService.decreaseWish(packageProductId);
+    }
+
+    /**
+     * 할인건이 있는 상품 목록 출력
+     */
+    @GetMapping("/discount/list")
+    public ResponseEntity<Page<PackageProductDiscountResponse>> discountProductList(
+            @RequestHeader("sellerId") Long sellerId,
+            @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        return new ResponseEntity<>(packageProductService.discountProductList(sellerId, pageable), HttpStatus.OK);
     }
 }

@@ -42,4 +42,6 @@ public interface PackageProductRepository extends JpaRepository<PackageProduct, 
     List<PackageStatisticResponse> findAllByIdContainDeletedNameOnly(List<Long> ids);
 
     List<PackageProduct> findAllByDiscountId(Long discountId);
+
+    Page<PackageProduct> findAllByFarmIdAndDiscountIdIsNotNull(Long farmId, Pageable pageable);
 }
