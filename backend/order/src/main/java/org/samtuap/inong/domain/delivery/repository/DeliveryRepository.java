@@ -7,6 +7,8 @@ import org.samtuap.inong.domain.order.entity.Ordering;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -31,4 +33,7 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
                                                        Pageable pageable);
 
     List<Delivery> findAllByOrdering(Ordering ordering);
+
+    @Query("SELECT COUNT(*) FROM Delivery d WHERE d.ordering.farmId = :farmId AND d.deliveryDueDate = :now")
+    Long countByFarmIdAndDeliveryDueDate(@Param("farmId") Long farmId, @Param("now") LocalDate now);
 }

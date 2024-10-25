@@ -20,7 +20,6 @@ public class FcmToken extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "varchar (255) unique not null")
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY)

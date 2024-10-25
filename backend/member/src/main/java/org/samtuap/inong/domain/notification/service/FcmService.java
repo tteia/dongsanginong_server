@@ -39,7 +39,7 @@ public class FcmService {
     @Transactional
     public void saveFcmToken(Long memberId, FcmTokenSaveRequest fcmTokenSaveRequest) {
         Member member = memberRepository.findByIdOrThrow(memberId);
-        Optional<FcmToken> fcmTokenOpt = fcmTokenRepository.findByToken(fcmTokenSaveRequest.fcmToken());
+        Optional<FcmToken> fcmTokenOpt = fcmTokenRepository.findByMemberAndToken(member, fcmTokenSaveRequest.fcmToken());
 
         if(fcmTokenOpt.isPresent()) { // 이미 저장돼 있는 경우
             return;
@@ -57,6 +57,7 @@ public class FcmService {
         Member member = memberRepository.findByIdOrThrow(memberId);
         Optional<FcmToken> fcmTokenOpt = fcmTokenRepository.findByMemberAndToken(member, fcmToken);
 
+        log.info("delete token >>>>>>>>>> {}, {}", memberId, fcmToken);
         if(fcmTokenOpt.isPresent()) {
             FcmToken token = fcmTokenOpt.get();
             fcmTokenRepository.delete(token);
@@ -121,4 +122,6 @@ public class FcmService {
             throw new BaseCustomException(FCM_SEND_FAIL);
         }
     }
+
+
 }

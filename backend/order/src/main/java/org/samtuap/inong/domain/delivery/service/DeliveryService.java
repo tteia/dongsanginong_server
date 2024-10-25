@@ -1,5 +1,7 @@
 package org.samtuap.inong.domain.delivery.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.common.client.MemberFeign;
@@ -20,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -113,5 +117,9 @@ public class DeliveryService {
             PackageProductResponse product = productFeign.getPackageProduct(delivery.getOrdering().getPackageId());
             return DeliveryListResponse.fromEntity(product, delivery);
         });
+    }
+
+    public Long getDeliveryCount(Long farmId, LocalDate date) {
+        return deliveryRepository.countByFarmIdAndDeliveryDueDate(farmId, date);
     }
 }
