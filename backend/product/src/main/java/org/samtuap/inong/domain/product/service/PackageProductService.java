@@ -176,15 +176,15 @@ public class PackageProductService {
     }
 
     @Transactional
-    public List<PackageProductForSaleListResponse> getForSalePackageProduct(Long farmId) {
-        List<PackageProduct> packageProducts = packageProductRepository.findAllByFarmId(farmId);
-        return packageProducts.stream()
-                .map(p -> {
-                    String imageUrl = packageProductImageRepository.findFirstByPackageProduct(p).getImageUrl();
-                    Farm farm = farmRepository.findByIdOrThrow(p.getFarm().getId());
-                    return PackageProductForSaleListResponse.fromEntity(p, imageUrl, farm);
-                })
-                .collect(Collectors.toList());
+    public Page<PackageProductForSaleListResponse> getForSalePackageProduct(Long farmId, Pageable pageable) {
+        Page<PackageProduct> packageProducts = packageProductRepository.findAllByFarmId(farmId, pageable);
+
+        return packageProducts.map(p -> {
+            PackageProductImage image = packageProductImageRepository.findFirstByPackageProduct(p);
+            String imageUrl = (image != null) ? image.getImageUrl() : "default-image-url";
+            Farm farm = farmRepository.findByIdOrThrow(p.getFarm().getId());
+            return PackageProductForSaleListResponse.fromEntity(p, imageUrl, farm);
+        });
     }
     // cache 처리 전 메서드 (테스트용)
     @Transactional
