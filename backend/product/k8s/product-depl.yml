@@ -31,20 +31,20 @@ spec:
               cpu: "0.5"
               memory: "250Mi"
           env:
-            - name: PROD_DATABASE_ENDPOINT
+            - name: PRODUCT_PROD_DATABASE_ENDPOINT
               valueFrom:
                 secretKeyRef:
-                  key: PROD_DATABASE_ENDPOINT
+                  key: PRODUCT_PROD_DATABASE_ENDPOINT
                   name: inong-app-secrets
-            - name: DEV_DATABASE_MASTER_NAME
+            - name: PROD_DATABASE_MASTER_NAME
               valueFrom:
                 secretKeyRef:
-                  key: DEV_DATABASE_MASTER_NAME
+                  key: PROD_DATABASE_MASTER_NAME
                   name: inong-app-secrets
-            - name: DEV_DATABASE_PASSWORD
+            - name: PROD_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: DEV_DATABASE_PASSWORD
+                  key: PROD_DATABASE_PASSWORD
                   name: inong-app-secrets
             - name: SPRING_ELASTICSEARCH_URIS
               valueFrom:
