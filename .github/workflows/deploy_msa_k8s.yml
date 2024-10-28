@@ -31,6 +31,16 @@ jobs:
       - name: login ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+    
+      # product 
+      - name: build and push docker product images to ecr
+        env:
+          REGISTRY: 676206947506.dkr.ecr.ap-northeast-2.amazonaws.com
+          REPOSITORY: inong/product
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest \
+          -f ./backend/product/Dockerfile ./backend/product
+          docker push $REGISTRY/$REPOSITORY:latest
 
       # member
       - name: build and push docker member images to ecr
@@ -61,16 +71,6 @@ jobs:
         run: |
           kubectl apply -f ./backend/order/k8s/order-depl.yml
           kubectl rollout restart deployment order-deployment
-
-      # product 
-      - name: build and push docker product images to ecr
-        env:
-          REGISTRY: 676206947506.dkr.ecr.ap-northeast-2.amazonaws.com
-          REPOSITORY: inong/product
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:latest \
-          -f ./backend/product/Dockerfile ./backend/product
-          docker push $REGISTRY/$REPOSITORY:latest
 
       - name: eks kubectl apply
         run: |
