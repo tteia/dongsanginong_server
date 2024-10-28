@@ -1,0 +1,83 @@
+server:
+  port: 8080
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: application-secret.properties
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: 'http://localhost:8081' # 변경 필요
+            allow-credentials: true
+            allowedHeaders: '*'
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
+              - PATCH
+      routes:
+        - id: product-service
+          predicates:
+            - Path=/product-service/**
+          filters:
+            - StripPrefix=1
+          uri: http://product-service
+        - id: member-service
+          predicates:
+            - Path=/member-service/**
+          filters:
+            - StripPrefix=1
+          uri: http://member-service
+        - id: order-service
+          predicates:
+            - Path=/order-service/**
+          filters:
+            - StripPrefix=1
+          uri: http://order-service
+        - id: live-service-http
+          predicates:
+            - Path=/live-service/**
+          filters:
+            - StripPrefix=1
+          uri: http://live-service
+        - id: live-service-ws
+          predicates:
+            - Path=/ws/**
+          filters:
+            - StripPrefix=1
+          uri: ws://live-service
+
+# swagger-ui
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    #    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /member-service/v3/api-docs
+        name: member-service
+      - url: /product-service/v3/api-docs
+        name: product-service
+      - url: /order-service/v3/api-docs
+        name: order-service
+      - url: /live-service/v3/api-docs
+        name: live-service
+
+
+jwt:
+  secret_key: ${JWT_SECRET_KEY}
+  token:
+    access_expiration_time: ${JWT_TOKEN_ACCESS_EXPIRATION_TIME}
+    refresh_expiration_time: ${JWT_TOKEN_REFRESH_EXPIRATION_TIME}
