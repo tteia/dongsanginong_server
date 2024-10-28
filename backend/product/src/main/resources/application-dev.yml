@@ -37,15 +37,15 @@ spring:
       port: 6379
       host: 127.0.0.1
     elasticsearch:
-      uris: ${SPRING.ELASTICSEARCH.URIS}
-      username: ${SPRING.ELASTICSEARCH.USERNAME}
-      password: ${SPRING.ELASTICSEARCH.PASSWORD}
+      uris: ${SPRING_ELASTICSEARCH_URIS}
+      username: ${SPRING_ELASTICSEARCH_USERNAME}
+      password: ${SPRING_ELASTICSEARCH_PASSWORD}
 
   mail:
     host: smtp.gmail.com
     port: 587
     username: dongsanginong@gmail.com
-    password: ${local.mail.password}
+    password: ${LOCAL_MAIL_PASSWORD}
     properties:
       mail:
         smtp:
