@@ -11,6 +11,7 @@ public record ChatMessageRequest(
         String content,
         boolean isOwner,
         String type,
-        Long couponId
+        Long couponId,
+        String emoji
 ) {
 }

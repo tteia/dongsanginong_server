@@ -17,6 +17,7 @@ import org.samtuap.inong.domain.live.repository.LiveRepository;
 import org.samtuap.inong.domain.live.service.LiveService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import static org.samtuap.inong.common.exceptionType.ChatExceptionType.ID_IS_NULL;
@@ -35,6 +36,7 @@ public class ChatService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final OrderFeign orderFeign;
     private final LiveService liveService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     private static final String KICKED_USERS_KEY_PREFIX = "kicked:users:";
 
@@ -176,4 +178,10 @@ public class ChatService {
             return false;
         }
     }
+
+    public void processEmojiMessage(String sessionId, ChatMessageRequest emojiMessageRequest) {
+        messagingTemplate.convertAndSend("/topic/live/" + sessionId + "/emojis", emojiMessageRequest);
+        log.info("이모지 출력 /topic/live/{}/emojis", sessionId);
+    }
 }
+
