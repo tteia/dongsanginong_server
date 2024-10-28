@@ -1,0 +1,93 @@
+
+name: deploy inong with k8s
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout github 
+        uses: actions/checkout@v2
+
+      - name: install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: "v1.25.9"
+        id: install
+      
+      - name: configure aws
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{secrets.AWS_KEY}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET}}
+          aws-region: ap-northeast-2
+
+      - name: update cluster information
+        run: aws eks update-kubeconfig --name inong-cluster --region ap-northeast-2
+
+      - name: login ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # member
+      - name: build and push docker member images to ecr
+        env:
+          REGISTRY: 676206947506.dkr.ecr.ap-northeast-2.amazonaws.com
+          REPOSITORY: inong/member
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest \
+          -f ./backend/member/Dockerfile ./backend/member
+          docker push $REGISTRY/$REPOSITORY:latest
+
+      - name: eks kubectl apply
+        run: |
+          kubectl apply -f ./backend/member/k8s/member-depl.yml
+          kubectl rollout restart deployment member-deployment
+
+      # order 
+      - name: build and push docker order images to ecr
+        env:
+          REGISTRY: 676206947506.dkr.ecr.ap-northeast-2.amazonaws.com
+          REPOSITORY: inong/order
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest \
+          -f ./backend/order/Dockerfile ./backend/order
+          docker push $REGISTRY/$REPOSITORY:latest
+
+      - name: eks kubectl apply
+        run: |
+          kubectl apply -f ./backend/order/k8s/order-depl.yml
+          kubectl rollout restart deployment order-deployment
+
+      # product 
+      - name: build and push docker product images to ecr
+        env:
+          REGISTRY: 676206947506.dkr.ecr.ap-northeast-2.amazonaws.com
+          REPOSITORY: inong/product
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest \
+          -f ./backend/product/Dockerfile ./backend/product
+          docker push $REGISTRY/$REPOSITORY:latest
+
+      - name: eks kubectl apply
+        run: |
+          kubectl apply -f ./backend/product/k8s/product-depl.yml
+          kubectl rollout restart deployment product-deployment
+
+        # live
+      - name: build and push docker live images to ecr
+        env:
+          REGISTRY: 676206947506.dkr.ecr.ap-northeast-2.amazonaws.com
+          REPOSITORY: inong/live
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest \
+          -f ./backend/live/Dockerfile ./backend/live
+          docker push $REGISTRY/$REPOSITORY:latest
+
+      - name: eks kubectl apply
+        run: |
+          kubectl apply -f ./backend/live/k8s/live-depl.yml
+          kubectl rollout restart deployment live-deployment
