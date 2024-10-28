@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "live-service", configuration = FeignConfig.class)
 public interface LiveFeign {
 
     @PostMapping("/live/farm")

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "member-service", configuration = FeignConfig.class)
+
 public interface MemberFeign {
 
     @GetMapping(value = "/member/{id}")

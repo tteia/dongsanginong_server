@@ -2,13 +2,12 @@ package org.samtuap.inong.common.client;
 
 import org.samtuap.inong.config.FeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.time.LocalDate;
 import java.util.List;
-
-@FeignClient(name = "order-service", configuration = FeignConfig.class)
 public interface OrderFeign {
 
     @GetMapping(value = "/order/package/top")
