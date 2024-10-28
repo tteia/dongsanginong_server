@@ -47,13 +47,13 @@ public class ChatController {
     }
 
     @MessageMapping("/chat/{sessionId}/sendCoupon")
-    public void sendCoupon(@DestinationVariable ("sessionId") String sessionId, CouponMessage couponMessage) {
+    public void sendCoupon(@DestinationVariable("sessionId") String sessionId, CouponMessage couponMessage) {
         // 쿠폰 메시지를 모든 시청자에게 브로드캐스트
         messagingTemplate.convertAndSend("/topic/live/" + sessionId, couponMessage);
     }
 
     @MessageMapping("/chat/{sessionId}/sendEmoji")
-    public void sendEmojiMessage(@DestinationVariable ("sessionId") String sessionId, ChatMessageRequest emojiMessageRequest) {
+    public void sendEmojiMessage(@DestinationVariable("sessionId") String sessionId, ChatMessageRequest emojiMessageRequest) {
         if (emojiMessageRequest.type().equals("EMOJI")) {
             chatService.processEmojiMessage(sessionId, emojiMessageRequest);
         }
