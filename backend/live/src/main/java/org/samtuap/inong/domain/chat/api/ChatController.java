@@ -53,7 +53,7 @@ public class ChatController {
     }
 
     @MessageMapping("/chat/{sessionId}/sendEmoji")
-    public void sendEmojiMessage(@DestinationVariable String sessionId, ChatMessageRequest emojiMessageRequest) {
+    public void sendEmojiMessage(@DestinationVariable ("sessionId") String sessionId, ChatMessageRequest emojiMessageRequest) {
         if (emojiMessageRequest.type().equals("EMOJI")) {
             chatService.processEmojiMessage(sessionId, emojiMessageRequest);
         }
