@@ -243,7 +243,13 @@ public class PackageProductService {
             PackageProductImage image = packageProductImageRepository.findFirstByPackageProduct(p);
             String imageUrl = (image != null) ? image.getImageUrl() : "default-image-url";
             Farm farm = farmRepository.findByIdOrThrow(p.getFarm().getId());
-            return PackageProductForSaleListResponse.fromEntity(p, imageUrl, farm);
+
+            if (p.getDiscountId() != null) {
+                Discount discount = discountRepository.findByIdThrow(p.getDiscountId());
+                return PackageProductForSaleListResponse.fromEntity(p, imageUrl, farm, discount.getDiscount(), discount.isDiscountActive());
+            } else {
+                return PackageProductForSaleListResponse.fromEntity(p, imageUrl, farm, null, false);
+            }
         });
     }
     // cache 처리 전 메서드 (테스트용)
@@ -254,7 +260,12 @@ public class PackageProductService {
                 .map(p -> {
                     String imageUrl = packageProductImageRepository.findFirstByPackageProduct(p).getImageUrl();
                     Farm farm = farmRepository.findByIdOrThrow(p.getFarm().getId());
-                    return PackageProductForSaleListResponse.fromEntity(p, imageUrl, farm);
+                    if (p.getDiscountId() != null) {
+                        Discount discount = discountRepository.findByIdThrow(p.getDiscountId());
+                        return PackageProductForSaleListResponse.fromEntity(p, imageUrl, farm, discount.getDiscount(), discount.isDiscountActive());
+                    } else {
+                        return PackageProductForSaleListResponse.fromEntity(p, imageUrl, farm, null, false);
+                    }
                 })
                 .collect(Collectors.toList());
     }
