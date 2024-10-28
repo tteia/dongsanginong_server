@@ -49,17 +49,17 @@ spec:
             - name: SPRING_ELASTICSEARCH_URIS
               valueFrom:
                 secretKeyRef:
-                  key: SPRING.ELASTICSEARCH.URIS
+                  key: SPRING_ELASTICSEARCH_URIS
                   name: inong-app-secrets
             - name: SPRING_ELASTICSEARCH_USERNAME
               valueFrom:
                 secretKeyRef:
-                  key: SPRING.ELASTICSEARCH.USERNAME
+                  key: SPRING_ELASTICSEARCH_USERNAME
                   name: inong-app-secrets
             - name: SPRING_ELASTICSEARCH_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: SPRING.ELASTICSEARCH.PASSWORD
+                  key: SPRING_ELASTICSEARCH_PASSWORD
                   name: inong-app-secrets
             - name: FCM_SECRET_FILE
               valueFrom:
@@ -69,7 +69,7 @@ spec:
             - name: LOCAL_MAIL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: local.mail.password
+                  key: LOCAL_MAIL_PASSWORD
                   name: inong-app-secrets
             - name: AWS_ACCESS_KEY
               valueFrom:
