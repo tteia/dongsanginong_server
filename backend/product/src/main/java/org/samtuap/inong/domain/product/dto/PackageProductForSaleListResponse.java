@@ -12,9 +12,13 @@ public record PackageProductForSaleListResponse(Long packageId,
                                                 String farmName,
                                                 Integer deliveryCycle,
                                                 Long price,
-                                                Long orderCount) {
+                                                Long orderCount,
+                                                Long discountId,
+                                                Integer discount,
+                                                boolean discountActive) {
 
-    public static PackageProductForSaleListResponse fromEntity(PackageProduct packageProduct, String imageUrl, Farm farm){
+    public static PackageProductForSaleListResponse fromEntity(PackageProduct packageProduct, String imageUrl, Farm farm,
+                                                               Integer discount, boolean discountActive){
         return PackageProductForSaleListResponse.builder()
                 .packageId(packageProduct.getId())
                 .packageName(packageProduct.getPackageName())
@@ -24,6 +28,9 @@ public record PackageProductForSaleListResponse(Long packageId,
                 .deliveryCycle(packageProduct.getDelivery_cycle())
                 .price(packageProduct.getPrice())
                 .orderCount(packageProduct.getOrderCount())
+                .discountId(packageProduct.getDiscountId())
+                .discount(discount)
+                .discountActive(discountActive)
                 .build();
     }
 }

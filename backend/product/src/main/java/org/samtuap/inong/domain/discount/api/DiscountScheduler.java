@@ -23,15 +23,22 @@ public class DiscountScheduler {
     private final CacheManager cacheManager;
 
     // 자정마다 실행되도록 스케줄러 설정 (매일 0시 0분 0초에 실행)
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+//    @Scheduled(cron = "0 */1 * * * ?") // 1분마다
     @Transactional
     public void applyDiscounts() {
         LocalDate now = LocalDate.now();
 
         // 현재 날짜와 startAt이 "같은" 할인 목록을 가져와 활성화 처리
         List<Discount> discountsToActivate = discountRepository.findAllByStartAt(now);
+        log.info(">>>현재 날짜 : {}", now);
+        log.info(">>>>>반환값 : {} ", discountsToActivate);
         for (Discount discount : discountsToActivate) {
+            log.info(">>>>discount: {}", discount);
+
+            log.info(">>>>>active 변경전1: {}", discount.isDiscountActive());
             DiscountUtil.activateDiscount(discount);  // 할인 활성화 (discountActive 필드를 true로 변경)
+            log.info(">>>>>active 변경후1: {}", discount.isDiscountActive());
             discountRepository.save(discount);  // 변경된 할인 정보 저장
         }
 
