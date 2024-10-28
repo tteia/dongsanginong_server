@@ -9,7 +9,7 @@ spring:
   application:
     name: live-service
   datasource:
-    url: ${LIVE_PROD_DATABASE_ENDPOINT}
+    url: jdbc:mariadb://${LIVE_PROD_DATABASE_ENDPOINT}
     username: ${PROD_DATABASE_MASTER_NAME}
     password: ${PROD_DATABASE_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
