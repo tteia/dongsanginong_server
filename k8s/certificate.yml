@@ -26,8 +26,4 @@ spec:
     kind: ClusterIssuer
   commonName: api.inong.shop
   dnsNames:
-<<<<<<< HEAD
   - api.inong.shop
-=======
-  - api.inong.store
->>>>>>> f933c52320397e07e033239327468bb3bbbc7450
