@@ -126,4 +126,9 @@ public class PackageProductController {
             @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
         return new ResponseEntity<>(packageProductService.discountProductList(sellerId, pageable), HttpStatus.OK);
     }
+
+    @GetMapping("/healthcheck")
+    public String healthcheck() {
+        return "ok!";
+    }
 }

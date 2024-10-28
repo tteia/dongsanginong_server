@@ -49,4 +49,8 @@ public class OrderController {
         return new ResponseEntity<>(myOrderPaymentList, HttpStatus.OK);
     }
 
+    @GetMapping("/healthcheck")
+    public String healthcheck() {
+        return "ok!";
+    }
 }
