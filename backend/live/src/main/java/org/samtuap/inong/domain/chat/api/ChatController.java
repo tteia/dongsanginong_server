@@ -51,4 +51,11 @@ public class ChatController {
         // 쿠폰 메시지를 모든 시청자에게 브로드캐스트
         messagingTemplate.convertAndSend("/topic/live/" + sessionId, couponMessage);
     }
+
+    @MessageMapping("/chat/{sessionId}/sendEmoji")
+    public void sendEmojiMessage(@DestinationVariable String sessionId, ChatMessageRequest emojiMessageRequest) {
+        if (emojiMessageRequest.type().equals("EMOJI")) {
+            chatService.processEmojiMessage(sessionId, emojiMessageRequest);
+        }
+    }
 }
