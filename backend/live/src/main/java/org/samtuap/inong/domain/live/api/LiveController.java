@@ -78,4 +78,9 @@ public class LiveController {
     public CouponDetailResponse getCoupon(@PathVariable("sessionId") String sessionId) {
         return liveService.getCoupon(sessionId);
     }
+
+    @GetMapping("/healthcheck")
+    public String healthcheck() {
+        return "ok!";
+    }
 }

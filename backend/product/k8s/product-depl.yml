@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+
+kind: Deployment
+metadata:
+  name: product-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product
+
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      containers:
+        - name: product
+          # aws의 ecr 주소 사용
+          image:
+          ports:
+            - containerPort: 8080
+          resources:
+            # 최대 할당가능량
+            limits:
+              cpu: "1"
+              memory: "500Mi"
+            # 최소 할당량
+            requests:
+              cpu: "0.5"
+              memory: "250Mi"
+          env:
+            - name: PRODUCT_PROD_DATABASE_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  key: PRODUCT_PROD_DATABASE_ENDPOINT
+                  name: inong-app-secrets
+            - name: PROD_DATABASE_MASTER_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: PROD_DATABASE_MASTER_NAME
+                  name: inong-app-secrets
+            - name: PROD_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: PROD_DATABASE_PASSWORD
+                  name: inong-app-secrets
+            - name: SPRING_ELASTICSEARCH_URIS
+              valueFrom:
+                secretKeyRef:
+                  key: SPRING_ELASTICSEARCH_URIS
+                  name: inong-app-secrets
+            - name: SPRING_ELASTICSEARCH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: SPRING_ELASTICSEARCH_USERNAME
+                  name: inong-app-secrets
+            - name: SPRING_ELASTICSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: SPRING_ELASTICSEARCH_PASSWORD
+                  name: inong-app-secrets
+            - name: FCM_SECRET_FILE
+              valueFrom:
+                secretKeyRef:
+                  key: FCM_SECRET_FILE
+                  name: inong-app-secrets
+            - name: LOCAL_MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: LOCAL_MAIL_PASSWORD
+                  name: inong-app-secrets
+            - name: AWS_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_ACCESS_KEY
+                  name: inong-app-secrets
+            - name: AWS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_SECRET_KEY
+                  name: inong-app-secrets
+            - name: AWS_S3_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_S3_BUCKET
+                  name: inong-app-secrets
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_REGION
+                  name: inong-app-secrets
+          #무중단 배포를 위한 컨테이너 헬스체크
+          readinessProbe:
+            httpGet:
+              path: /product/healthcheck
+              port: 8080
+            # 컨테이너 시작 후 지연 시간 설정
+            initialDelaySeconds: 10
+            # 확인 반복 주기
+            periodSeconds: 10
+            # 요청 타임아웃 설정
+            timeoutSeconds: 1 # 1초 이내에 안오면 실패로 간주
+            # 성공 인식 횟수 설정. 몇번을 성공해야 성공으로 간주할거냐
+            successThreshold: 1
+            # 연속 실패 횟수: 연속적으로 5번을 실패하면 건강하지 않은 상태로 판단하여 기존 서버 종료시키지 않음
+            failureThreshold: 5
