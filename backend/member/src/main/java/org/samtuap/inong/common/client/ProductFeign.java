@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "product-service", configuration = FeignConfig.class)
 public interface ProductFeign {
     @GetMapping("/product/info/{id}")
     PackageProductResponse getPackageProduct(@PathVariable("id") Long packageProductId);
