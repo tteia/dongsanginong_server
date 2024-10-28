@@ -1,0 +1,61 @@
+server:
+  port: 0
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: application-secret.properties
+  application:
+    name: live-service
+  datasource:
+    url: ${LIVE_PROD_DATABASE_ENDPOINT}
+    username: ${PROD_DATABASE_MASTER_NAME}
+    password: ${PROD_DATABASE_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    generate-ddl: true
+  #    defer-datasource-initialization: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+9
+  sql:
+    init:
+      mode: always
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: live-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "*"
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    org.hibernate.sql: debug
+    org.hibernate.type: info
+
+openvidu:
+  url: ${OPENVIDU_URL}
+  secret: ${OPENVIDU_SECRET}
+
+jwt:
+  secret_key: ${JWT_SECRET_KEY}
+  token:
+    access_expiration_time: ${JWT_TOKEN_ACCESS_EXPIRATION_TIME}
+    refresh_expiration_time: ${JWT_TOKEN_REFRESH_EXPIRATION_TIME}

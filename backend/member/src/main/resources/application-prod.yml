@@ -1,0 +1,92 @@
+server:
+  port: 0
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: application-secret.properties
+  application:
+    name: member-service
+  datasource:
+    url: ${MEMBER_PROD_DATABASE_ENDPOINT}
+    username: ${PROD_DATABASE_MASTER_NAME}
+    password: ${PROD_DATABASE_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+    tomcat.initial-size: 3  # 적절한 수치로 조정
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    generate-ddl: true
+    defer-datasource-initialization: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+9
+  sql:
+    init:
+      mode: always
+  data:
+    redis:
+      port: 6379
+      host: 127.0.0.1
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: member-group
+      auto-offset-reset: earliest
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    org.hibernate.sql: debug
+    org.hibernate.type: info
+
+
+kakao:
+  login:
+    api_key: ${KAKAO_API_KEY}
+    redirect_uri: ${KAKAO_REDIRECT_URI}
+    uri:
+      base: ${KAKAO_LOGIN_URI_BASE}
+      code: ${KAKAO_LOGIN_URI_CODE}
+      token: ${KAKAO_LOGIN_URI_TOKEN}
+  api:
+    uri:
+      base: ${KAKAO_API_URI_BASE}
+      user: ${KAKAO_API_URI_USER}
+
+google:
+  login:
+    client_id: ${GOOGLE_CLIENT_ID}
+    code_uri: ${GOOGLE_CODE_URI}
+    token_uri: ${GOOGLE_TOKEN_URI}
+    client_secret: ${GOOGLE_CLIENT_SECRET}
+    redirect_uri: ${GOOGLE_REDIRECT_URI}
+    code_redirect_uri: ${GOOGLE_CODE_REDIRECT_URI}
+
+jwt:
+  secret_key: ${JWT_SECRET_KEY}
+  token:
+    access_expiration_time: ${JWT_TOKEN_ACCESS_EXPIRATION_TIME}
+    refresh_expiration_time: ${JWT_TOKEN_REFRESH_EXPIRATION_TIME}
+
+### swagger
+#springdoc:
+#  api-docs:
+#    path: /member-service/v3/api-docs
+#  swagger-ui:
+#    path: /member-service/swagger-ui.html
+#
+#openapi:
+#  service:
+#    # API Gateway port
+#    url: http://localhost:8080
+
+fcm:
+  secret-file: ${FCM_SECRET_FILE}
