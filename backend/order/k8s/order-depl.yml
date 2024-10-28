@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+
+kind: Deployment
+metadata:
+  name: order-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order
+
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          # aws의 ecr 주소 사용
+          image:
+          ports:
+            - containerPort: 8080
+          resources:
+            # 최대 할당가능량
+            limits:
+              cpu: "1"
+              memory: "500Mi"
+            # 최소 할당량
+            requests:
+              cpu: "0.5"
+              memory: "250Mi"
+          env:
+            - name: PROD_DATABASE_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  key: PROD_DATABASE_ENDPOINT
+                  name: inong-app-secrets
+            - name: DEV_DATABASE_MASTER_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: DEV_DATABASE_MASTER_NAME
+                  name: inong-app-secrets
+            - name: DEV_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DEV_DATABASE_PASSWORD
+                  name: inong-app-secrets
+            - name: PORTONE_KAKAO_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: PORTONE_KAKAO_API_SECRET
+                  name: inong-app-secrets
+            - name: PORTONE_PAYMENT_PREFIX
+              valueFrom:
+                secretKeyRef:
+                  key: PORTONE_PAYMENT_PREFIX
+                  name: inong-app-secrets
+            - name: PORTONE_STORE_ID
+              valueFrom:
+                secretKeyRef:
+                  key: PORTONE_STORE_ID
+                  name: inong-app-secrets
+            - name: PORTONE_CHANNELKEY
+              valueFrom:
+                secretKeyRef:
+                  key: PORTONE_CHANNELKEY
+                  name: inong-app-secrets
+          #무중단 배포를 위한 컨테이너 헬스체크
+          readinessProbe:
+            httpGet:
+              path: /order/healthcheck
+              port: 8080
+            # 컨테이너 시작 후 지연 시간 설정
+            initialDelaySeconds: 10
+            # 확인 반복 주기
+            periodSeconds: 10
+            # 요청 타임아웃 설정
+            timeoutSeconds: 1 # 1초 이내에 안오면 실패로 간주
+            # 성공 인식 횟수 설정. 몇번을 성공해야 성공으로 간주할거냐
+            successThreshold: 1
+            # 연속 실패 횟수: 연속적으로 5번을 실패하면 건강하지 않은 상태로 판단하여 기존 서버 종료시키지 않음
+            failureThreshold: 5
