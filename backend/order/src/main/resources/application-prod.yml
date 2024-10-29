@@ -48,10 +48,3 @@ portone:
   payment-prefix: ${PORTONE_PAYMENT_PREFIX}
   store-id: ${PORTONE_STORE_ID}
   channel-key: ${PORTONE_CHANNELKEY}
-
-# 유레카를 등록 및 활성화 안하도록
-eureka:
-  client:
-    enabled: false
-    registerWithEureka: false
-    fetchRegistry: false
