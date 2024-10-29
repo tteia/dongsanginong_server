@@ -2,9 +2,9 @@ server:
   port: 0
 
 spring:
-#  config:
-#    activate:
-#      on-profile: prod
+  config:
+    activate:
+      on-profile: prod
 #    import: application-secret.properties
   application:
     name: order-service
