@@ -38,6 +38,7 @@ out/
 
 ## secret
 src/main/resources/application-secret.properties
+src/main/resources/application.yml
 
 ## data
 src/main/resources/data.sql
