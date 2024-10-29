@@ -66,12 +66,6 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:latest \
           -f ./backend/order/Dockerfile ./backend/order
           docker push $REGISTRY/$REPOSITORY:latest
-
-      - name: eks kubectl apply
-        run: |
-          kubectl apply -f ./backend/order/k8s/order-depl.yml
-          kubectl rollout restart deployment order-deployment
-
       - name: eks kubectl apply
         run: |
           kubectl apply -f ./backend/product/k8s/product-depl.yml
