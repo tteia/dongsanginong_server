@@ -54,3 +54,10 @@ jwt:
   token:
     access_expiration_time: ${JWT_TOKEN_ACCESS_EXPIRATION_TIME}
     refresh_expiration_time: ${JWT_TOKEN_REFRESH_EXPIRATION_TIME}
+
+# 유레카를 등록 및 활성화 안하도록
+eureka:
+  client:
+    enabled: false
+    registerWithEureka: false
+    fetchRegistry: false

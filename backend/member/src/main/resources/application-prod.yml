@@ -71,17 +71,12 @@ jwt:
     access_expiration_time: ${JWT_TOKEN_ACCESS_EXPIRATION_TIME}
     refresh_expiration_time: ${JWT_TOKEN_REFRESH_EXPIRATION_TIME}
 
-### swagger
-#springdoc:
-#  api-docs:
-#    path: /member-service/v3/api-docs
-#  swagger-ui:
-#    path: /member-service/swagger-ui.html
-#
-#openapi:
-#  service:
-#    # API Gateway port
-#    url: http://localhost:8080
-
 fcm:
   secret-file: ${FCM_SECRET_FILE}
+
+# 유레카를 등록 및 활성화 안하도록
+eureka:
+  client:
+    enabled: false
+    registerWithEureka: false
+    fetchRegistry: false
