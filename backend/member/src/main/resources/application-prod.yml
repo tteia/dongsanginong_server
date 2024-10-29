@@ -37,11 +37,6 @@ spring:
       group-id: member-group
       auto-offset-reset: earliest
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-
 logging:
   level:
     org.hibernate.sql: debug

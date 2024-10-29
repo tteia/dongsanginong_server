@@ -58,11 +58,6 @@ spring:
           writetimeout: 5000
       auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30분
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-
 logging:
   level:
     org.hibernate.sql: debug

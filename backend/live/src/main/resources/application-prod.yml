@@ -40,11 +40,6 @@ spring:
             trusted:
               packages: "*"
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-
 logging:
   level:
     org.hibernate.sql: debug
