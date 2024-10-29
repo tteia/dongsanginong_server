@@ -47,6 +47,8 @@ dependencies {
 	// fcm
 	implementation 'com.google.firebase:firebase-admin:9.3.0'
 
+	implementation 'com.thoughtworks.xstream:xstream:1.4.20'
+
 }
 
 dependencyManagement {

@@ -65,6 +65,8 @@ dependencies {
 	// redis shedlock
 	implementation 'net.javacrumbs.shedlock:shedlock-spring:4.44.0'
 	implementation 'net.javacrumbs.shedlock:shedlock-provider-redis-spring:4.44.0'
+
+	implementation 'com.thoughtworks.xstream:xstream:1.4.20'
 }
 
 tasks.named('test') {
