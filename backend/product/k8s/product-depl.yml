@@ -104,7 +104,7 @@ spec:
           #무중단 배포를 위한 컨테이너 헬스체크
           readinessProbe:
             httpGet:
-              path: /product/healthcheck
+              path: /product-service/product/healthcheck
               port: 8080
             # 컨테이너 시작 후 지연 시간 설정
             initialDelaySeconds: 10
