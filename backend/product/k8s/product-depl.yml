@@ -107,7 +107,7 @@ spec:
               path: /product-service/product/healthcheck
               port: 8080
             # 컨테이너 시작 후 지연 시간 설정
-            initialDelaySeconds: 10
+            initialDelaySeconds: 20
             # 확인 반복 주기
             periodSeconds: 10
             # 요청 타임아웃 설정
