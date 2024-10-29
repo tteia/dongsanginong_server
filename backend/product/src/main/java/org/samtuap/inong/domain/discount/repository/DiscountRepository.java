@@ -14,6 +14,10 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
 
     List<Discount> findAllByEndAtBefore(LocalDate now);
 
+    List<Discount> findAllByStartAtLessThanEqualAndDiscountActiveFalse(LocalDate now);
+
+    List<Discount> findAllByEndAtLessThanEqualAndDiscountActiveTrue(LocalDate now);
+
     List<Discount> findAll();
 
     default Discount findByIdThrow(Long id) {
