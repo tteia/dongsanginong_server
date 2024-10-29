@@ -19,4 +19,4 @@ WORKDIR /app
 
 COPY --from=stage1 /app/build/libs/*.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
+ENTRYPOINT ["java", "-jar", "app.jar", "-Dspring.profiles.active=prod"]
