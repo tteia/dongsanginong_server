@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.common.exception.BaseCustomException;
 import org.samtuap.inong.domain.discount.dto.DiscountCreateRequest;
+import org.samtuap.inong.domain.discount.dto.DiscountDetailResponse;
 import org.samtuap.inong.domain.discount.dto.DiscountResponse;
 import org.samtuap.inong.domain.discount.dto.DiscountUpdateRequest;
 import org.samtuap.inong.domain.discount.entity.Discount;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.samtuap.inong.common.exceptionType.ProductExceptionType.*;
 
 @Slf4j
@@ -69,13 +72,47 @@ public class DiscountService {
             log.info(">>>>날짜 : " + existingDiscount.getStartAt() + " >>>> 오늘보다 이후 => 비활성화");
             existingDiscount.updateDiscountActive(false);
         }
-        // 변경된 할인이 적용된 상품의 캐시 삭제 처리
-        List<PackageProduct> discountProducts = packageProductRepository.findAllByDiscountId(discountId);
-        if(!discountProducts.isEmpty()){
-            for (PackageProduct product : discountProducts) {
-                cacheManager.getCache("PackageDetail").evict(product.getId());
-            }
+
+        // 기존에 할인에 적용된 상품들의 ID 리스트
+        List<PackageProduct> existingProducts = packageProductRepository.findAllByDiscountId(discountId);
+        List<Long> existingProductIds = existingProducts.stream()
+                .map(PackageProduct::getId)
+                .collect(Collectors.toList());
+
+        // 요청으로 받은 새로운 상품 ID 리스트
+        List<Long> newProductIds = request.productIdList();
+
+        // 할인에서 제거할 상품들 (기존에 있었지만 새 리스트에는 없는 상품들)
+        List<Long> productsToRemoveDiscount = existingProductIds.stream()
+                .filter(id -> !newProductIds.contains(id))
+                .collect(Collectors.toList());
+        for (Long productId : productsToRemoveDiscount) {
+            PackageProduct product = packageProductRepository.findByIdOrThrow(productId);
+            product.updateDiscountId(null);
+            cacheManager.getCache("PackageDetail").evict(productId);
         }
+
+        // 할인에 새로 추가할 상품들 (새 리스트에는 있지만 기존에 없었던 상품들)
+        List<Long> productsToAddDiscount = newProductIds.stream()
+                .filter(id -> !existingProductIds.contains(id))
+                .collect(Collectors.toList());
+        for (Long productId : productsToAddDiscount) {
+            PackageProduct product = packageProductRepository.findByIdOrThrow(productId);
+            if (product.getDiscountId() == null) {
+                product.updateDiscountId(discountId);
+            } else {
+                throw new BaseCustomException(DISCOUNT_ALREADY_EXISTS);
+            }
+            cacheManager.getCache("PackageDetail").evict(productId);
+        }
+
+//        // 변경된 할인이 적용된 상품의 캐시 삭제 처리
+//        List<PackageProduct> discountProducts = packageProductRepository.findAllByDiscountId(discountId);
+//        if(!discountProducts.isEmpty()){
+//            for (PackageProduct product : discountProducts) {
+//                cacheManager.getCache("PackageDetail").evict(product.getId());
+//            }
+//        }
         discountRepository.save(existingDiscount);
     }
 
@@ -101,9 +138,16 @@ public class DiscountService {
     }
 
     // 할인 디테일 조회
-    public DiscountResponse getDiscountDetail(Long discountId) {
+    public DiscountDetailResponse getDiscountDetail(Long discountId) {
         Discount discount = discountRepository.findById(discountId)
                 .orElseThrow(() -> new BaseCustomException(DISCOUNT_NOT_FOUND));
-        return DiscountResponse.fromEntity(discount);
+
+        // 해당 할인에 적용된 상품들의 ID 리스트 조회
+        List<PackageProduct> productList = packageProductRepository.findAllByDiscountId(discountId);
+        List<Long> productIdList = productList.stream()
+                .map(PackageProduct::getId)
+                .collect(Collectors.toList());
+
+        return DiscountDetailResponse.fromEntity(discount, productIdList);
     }
 }

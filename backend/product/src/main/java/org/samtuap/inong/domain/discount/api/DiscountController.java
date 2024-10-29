@@ -2,6 +2,7 @@ package org.samtuap.inong.domain.discount.api;
 
 import lombok.RequiredArgsConstructor;
 import org.samtuap.inong.domain.discount.dto.DiscountCreateRequest;
+import org.samtuap.inong.domain.discount.dto.DiscountDetailResponse;
 import org.samtuap.inong.domain.discount.dto.DiscountResponse;
 import org.samtuap.inong.domain.discount.dto.DiscountUpdateRequest;
 import org.samtuap.inong.domain.discount.service.DiscountService;
@@ -54,7 +55,7 @@ public class DiscountController {
 
     // 할인 디테일 조회
     @GetMapping("/{discountId}/detail")
-    public ResponseEntity<DiscountResponse> getDiscountDetail(@PathVariable("discountId") Long discountId) {
+    public ResponseEntity<DiscountDetailResponse> getDiscountDetail(@PathVariable("discountId") Long discountId) {
         return new ResponseEntity<>(discountService.getDiscountDetail(discountId), HttpStatus.OK);
     }
 }
