@@ -2,6 +2,7 @@ package org.samtuap.inong.domain.chat.kafka;
 
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.samtuap.inong.domain.chat.dto.ChatMessageRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -17,6 +18,9 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String KAFKA_HOST;
+
     @Bean
     public ProducerFactory<String, ChatMessageRequest> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
@@ -25,7 +29,7 @@ public class KafkaProducerConfig {
     @Bean
     public Map<String, Object> producerConfigurations() {
         Map<String, Object> configurations = new HashMap<>();
-        configurations.put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConstants.KAFKA_BROKER);
+        configurations.put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_HOST);
         configurations.put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configurations.put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         return configurations;
