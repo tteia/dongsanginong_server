@@ -28,10 +28,11 @@ public class Discount extends BaseEntity {
 
     private boolean discountActive; // 할인 활성화 상태
 
-    public void updateDiscount(Integer discount, LocalDate startAt, LocalDate endAt) {
+    public void updateDiscount(Integer discount, LocalDate startAt, LocalDate endAt, boolean discountActive) {
         this.discount = discount;
         this.startAt = startAt;
         this.endAt = endAt;
+        this.discountActive = discountActive;
     }
 
     public void updateDiscountActive(boolean discountActive) {

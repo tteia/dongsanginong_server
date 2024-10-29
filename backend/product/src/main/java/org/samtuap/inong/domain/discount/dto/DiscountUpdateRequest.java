@@ -11,9 +11,10 @@ public record DiscountUpdateRequest(
         Integer discount,
         LocalDate startAt,
         LocalDate endAt,
+        boolean discountActive,
         List<Long> productIdList
 ) {
     public void updateEntity(Discount discount) {
-        discount.updateDiscount(this.discount, this.startAt, this.endAt);
+        discount.updateDiscount(this.discount, this.startAt, this.endAt, this.discountActive);
     }
 }
