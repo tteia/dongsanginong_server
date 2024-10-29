@@ -85,3 +85,18 @@ jobs:
         run: |
           kubectl apply -f ./backend/live/k8s/live-depl.yml
           kubectl rollout restart deployment live-deployment
+
+        # apigateway
+      - name: build and push docker apigateway images to ecr
+        env:
+          REGISTRY: 676206947506.dkr.ecr.ap-northeast-2.amazonaws.com
+          REPOSITORY: inong/apigateway
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest \
+          -f ./backend/apigateway/Dockerfile ./backend/apigateway
+          docker push $REGISTRY/$REPOSITORY:latest
+
+      - name: eks kubectl apply
+        run: |
+          kubectl apply -f ./backend/live/k8s/apigateway-depl.yml
+          kubectl rollout restart deployment apigateway-deployment
