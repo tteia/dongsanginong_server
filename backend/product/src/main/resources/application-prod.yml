@@ -28,14 +28,14 @@ spring:
     init:
       mode: always
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       group-id: product-group
       auto-offset-reset: earliest
   data:
     redis:
       port: 6379
-      host: 127.0.0.1
+      host: ${REDIS_HOST}
     elasticsearch:
       uris: ${SPRING_ELASTICSEARCH_URIS}
       username: ${SPRING_ELASTICSEARCH_USERNAME}
