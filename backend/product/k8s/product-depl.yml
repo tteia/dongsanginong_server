@@ -91,6 +91,16 @@ spec:
                 secretKeyRef:
                   key: AWS_REGION
                   name: inong-app-secrets
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_BOOTSTRAP_SERVERS
+                  name: inong-app-secrets
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: REDIS_HOST
+                  name: inong-app-secrets
           #무중단 배포를 위한 컨테이너 헬스체크
           readinessProbe:
             httpGet:

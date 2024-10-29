@@ -71,6 +71,11 @@ spec:
                 secretKeyRef:
                   key: OPENVIDU_SECRET
                   name: inong-app-secrets
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_BOOTSTRAP_SERVERS
+                  name: inong-app-secrets
           #무중단 배포를 위한 컨테이너 헬스체크
           readinessProbe:
             httpGet:
