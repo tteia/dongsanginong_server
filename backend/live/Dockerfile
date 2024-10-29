@@ -14,7 +14,7 @@ RUN chmod 777 gradlew
 RUN ./gradlew bootJar
 
 # 두 번째 스테이지
-FROM openjdk:17
+FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 COPY --from=stage1 /app/build/libs/*.jar app.jar
