@@ -16,17 +16,17 @@ spec:
   - host: api.inong.shop
     http:
       paths:
-        - path: /(.*)
+        - path: /
           pathType: Prefix
           backend:
             service:
               name: apigateway-service
               port:
                 number: 80 # 서비스 포트를 적어 줘야 한다.
-        - path: /openvidu/(.*)
+        - path: /openvidu
           pathType: Prefix
           backend:
             service:
-              name: dev-openvidu-service 
+              name: openvidu-dev-service
               port:
                 number: 80
