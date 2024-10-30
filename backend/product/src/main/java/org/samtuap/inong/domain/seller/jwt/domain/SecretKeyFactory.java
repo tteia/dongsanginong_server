@@ -10,8 +10,9 @@ import javax.crypto.SecretKey;
 @RequiredArgsConstructor
 @Component
 public class SecretKeyFactory {
-    @Value("${JWT_SECRET_KEY}")
+    @Value("${jwt.secret_key}")
     private String secretKey;
+
 
     public SecretKey createSecretKey() {
         byte[] keyBytes = secretKey.getBytes();

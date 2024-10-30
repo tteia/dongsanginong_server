@@ -36,71 +36,103 @@ spec:
                 secretKeyRef:
                   key: PRODUCT_PROD_DATABASE_ENDPOINT
                   name: inong-app-secrets
+
             - name: PROD_DATABASE_MASTER_NAME
               valueFrom:
                 secretKeyRef:
                   key: PROD_DATABASE_MASTER_NAME
                   name: inong-app-secrets
+
             - name: PROD_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: PROD_DATABASE_PASSWORD
                   name: inong-app-secrets
+
             - name: SPRING_ELASTICSEARCH_URIS
               valueFrom:
                 secretKeyRef:
                   key: SPRING_ELASTICSEARCH_URIS
                   name: inong-app-secrets
+
             - name: SPRING_ELASTICSEARCH_USERNAME
               valueFrom:
                 secretKeyRef:
                   key: SPRING_ELASTICSEARCH_USERNAME
                   name: inong-app-secrets
+
             - name: SPRING_ELASTICSEARCH_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: SPRING_ELASTICSEARCH_PASSWORD
                   name: inong-app-secrets
+
             - name: FCM_SECRET_FILE
               valueFrom:
                 secretKeyRef:
                   key: FCM_SECRET_FILE
                   name: inong-app-secrets
+
             - name: LOCAL_MAIL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: LOCAL_MAIL_PASSWORD
                   name: inong-app-secrets
+
             - name: AWS_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   key: AWS_ACCESS_KEY
                   name: inong-app-secrets
+
             - name: AWS_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   key: AWS_SECRET_KEY
                   name: inong-app-secrets
+
             - name: AWS_S3_BUCKET
               valueFrom:
                 secretKeyRef:
                   key: AWS_S3_BUCKET
                   name: inong-app-secrets
+
             - name: AWS_REGION
               valueFrom:
                 secretKeyRef:
                   key: AWS_REGION
                   name: inong-app-secrets
+
             - name: KAFKA_BOOTSTRAP_SERVERS
               valueFrom:
                 secretKeyRef:
                   key: KAFKA_BOOTSTRAP_SERVERS
                   name: inong-app-secrets
+
             - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
                   key: REDIS_HOST
                   name: inong-app-secrets
+
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: JWT_SECRET_KEY
+                  name: inong-app-secrets
+
+            - name: JWT_TOKEN_ACCESS_EXPIRATION_TIME
+              valueFrom:
+                secretKeyRef:
+                  key: JWT_TOKEN_ACCESS_EXPIRATION_TIME
+                  name: inong-app-secrets
+
+            - name: JWT_TOKEN_REFRESH_EXPIRATION_TIME
+              valueFrom:
+                secretKeyRef:
+                  key: JWT_TOKEN_REFRESH_EXPIRATION_TIME
+                  name: inong-app-secrets
+
           #무중단 배포를 위한 컨테이너 헬스체크
           readinessProbe:
             httpGet:
