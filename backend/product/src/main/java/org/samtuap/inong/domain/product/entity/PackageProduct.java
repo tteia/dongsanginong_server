@@ -36,7 +36,7 @@ public class PackageProduct extends BaseEntity {
     @NotNull
     private Long price;
 
-    @Column(columnDefinition = "text")
+    @Column(length=3000)
     private String productDescription;
 
     private String productCode;
