@@ -101,6 +101,21 @@ spec:
                 secretKeyRef:
                   key: REDIS_HOST
                   name: inong-app-secrets
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: JWT_SECRET
+                  name: inong-app-secrets
+            - name: JWT_TOKEN_ACCESS_EXPIRATION_TIME
+              valueFrom:
+                secretKeyRef:
+                  key: JWT_TOKEN_ACCESS_EXPIRATION_TIME
+                  name: inong-app-secrets
+            - name: JWT_TOKEN_REFRESH_EXPIRATION_TIME
+              valueFrom:
+                secretKeyRef:
+                  key: JWT_TOKEN_REFRESH_EXPIRATION_TIME
+                  name: inong-app-secrets
           #무중단 배포를 위한 컨테이너 헬스체크
           readinessProbe:
             httpGet:
