@@ -82,3 +82,9 @@ cloud:
       auto: false
     stack:
       auto: false
+
+jwt:
+  secret_key: ${JWT_SECRET_KEY}
+  token:
+    access_expiration_time: ${JWT_TOKEN_ACCESS_EXPIRATION_TIME}
+    refresh_expiration_time: ${JWT_TOKEN_REFRESH_EXPIRATION_TIME}
