@@ -43,6 +43,11 @@ jobs:
           -f ./backend/product/Dockerfile ./backend/product
           docker push $REGISTRY/$REPOSITORY:latest
 
+      - name: eks kubectl apply
+        run: |
+          kubectl apply -f ./backend/product/k8s/product-depl.yml
+          kubectl rollout restart deployment product-deployment
+
       # member
       - name: build and push docker member images to ecr
         env:
@@ -69,8 +74,8 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:latest
       - name: eks kubectl apply
         run: |
-          kubectl apply -f ./backend/product/k8s/product-depl.yml
-          kubectl rollout restart deployment product-deployment
+          kubectl apply -f ./backend/order/k8s/order-depl.yml
+          kubectl rollout restart deployment order-deployment
 
         # live
       - name: build and push docker live images to ecr
