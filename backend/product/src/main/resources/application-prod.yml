@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 8080
 spring:
   config:
     activate:
@@ -31,6 +31,7 @@ spring:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       group-id: product-group
+      group-instance-id: ${HOSTNAME}-instance
       auto-offset-reset: earliest
   data:
     redis:
@@ -79,4 +80,3 @@ cloud:
       auto: false
     stack:
       auto: false
-

@@ -2,21 +2,21 @@ apiVersion: apps/v1
 
 kind: Deployment
 metadata:
-  name: live-deployment
+  name: apigateway-deployment
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: live
+      app: apigateway
 
   template:
     metadata:
       labels:
-        app: live
+        app: apigateway
     spec:
       containers:
-        - name: live
+        - name: apigateway
           # aws의 ecr 주소 사용
           image: 676206947506.dkr.ecr.ap-northeast-2.amazonaws.com/inong/apigateway:latest
           ports:
@@ -46,17 +46,3 @@ spec:
                 secretKeyRef:
                   key: JWT_TOKEN_REFRESH_EXPIRATION_TIME
                   name: inong-app-secrets
-          readinessProbe:
-            httpGet:
-              path: /live/healthcheck
-              port: 8080
-            # 컨테이너 시작 후 지연 시간 설정
-            initialDelaySeconds: 10
-            # 확인 반복 주기
-            periodSeconds: 10
-            # 요청 타임아웃 설정
-            timeoutSeconds: 1 # 1초 이내에 안오면 실패로 간주
-            # 성공 인식 횟수 설정. 몇번을 성공해야 성공으로 간주할거냐
-            successThreshold: 1
-            # 연속 실패 횟수: 연속적으로 5번을 실패하면 건강하지 않은 상태로 판단하여 기존 서버 종료시키지 않음
-            failureThreshold: 5

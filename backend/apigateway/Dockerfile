@@ -1,3 +1,4 @@
+
 FROM openjdk:17-jdk-alpine as stage1
 
 WORKDIR /app

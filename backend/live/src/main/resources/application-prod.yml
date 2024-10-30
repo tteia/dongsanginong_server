@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 8080
 
 spring:
   config:
@@ -31,10 +31,13 @@ spring:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       group-id: live-group
+      group-instance-id: ${HOSTNAME}-instance
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
+        socket.connection.setup.timeout.ms: 60000
+        socket.connection.setup.timeout.max.ms: 60000
         spring:
           json:
             trusted:
