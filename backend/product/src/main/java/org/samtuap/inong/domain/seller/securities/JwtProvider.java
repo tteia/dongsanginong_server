@@ -16,13 +16,13 @@ public class JwtProvider {
 
     private final SecretKeyFactory secretKeyFactory;
 
-    @Value("${JWT_SECRET_KEY}")
+    @Value("${jwt.secret_key}")
     private String secretKey;
 
-    @Value("${JWT_TOKEN_ACCESS_EXPIRATION_TIME}")
+    @Value("${jwt.token.access_expiration_time}")
     private Long accessExpirationTime;
 
-    @Value("${JWT_TOKEN_REFRESH_EXPIRATION_TIME}")
+    @Value("${jwt.token.refresh_expiration_time}")
     private Long refreshExpirationTime;
 
     public String createToken(Long sellerId, String role) {
