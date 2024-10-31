@@ -380,5 +380,4 @@ public class OrderService {
         receipt.updateRefundedAt(LocalDateTime.now());
         receiptRepository.save(receipt);
     }
-
 }
