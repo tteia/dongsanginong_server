@@ -52,7 +52,7 @@ logging:
     org.hibernate.type: info
 
 openvidu:
-  url: ${OPENVIDU_URL}
+  url: "https://openvidu-service:4443"
   secret: ${OPENVIDU_SECRET}
 
 jwt:
