@@ -15,8 +15,8 @@ public interface OrderFeign {
 
 
     @GetMapping("/order/package/{packageId}/count")
-    Long getAllOrders(@PathVariable Long packageId);
+    Long getAllOrders(@PathVariable("packageId") Long packageId);
 
     @GetMapping("/delivery/farm/{farmId}/count")
-    Long getDeliveryCountByFarmId(@PathVariable Long farmId, @RequestParam("date") String date);
+    Long getDeliveryCountByFarmId(@PathVariable("farmId") Long farmId, @RequestParam("date") String date);
 }
