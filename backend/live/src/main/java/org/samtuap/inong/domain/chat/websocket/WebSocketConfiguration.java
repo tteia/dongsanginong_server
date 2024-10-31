@@ -31,7 +31,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
 //    stomp 접속 주소 url => /ws
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:8081").withSockJS()
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:8081", "https://www.inong.shop").withSockJS()
                 .setHeartbeatTime(1000);
     }
 
