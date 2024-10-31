@@ -39,6 +39,9 @@ public class PackageProduct extends BaseEntity {
     @Column(length=3000)
     private String productDescription;
 
+    @Column(columnDefinition = "text")
+    private String detailedProductDescription; // 상세 소개
+
     private String productCode;
 
     private String origin;
@@ -81,5 +84,9 @@ public class PackageProduct extends BaseEntity {
 
     public void updateDiscountId(Long discountId) {
         this.discountId = discountId;
+    }
+
+    public void updateDetailedProductDescription(String detailedProductDescription) {
+        this.detailedProductDescription = detailedProductDescription;
     }
 }

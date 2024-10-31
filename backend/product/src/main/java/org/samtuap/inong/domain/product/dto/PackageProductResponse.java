@@ -17,6 +17,7 @@ public record PackageProductResponse(Long id,
                                      Long farmId,
                                      String farmName,
                                      String productDescription,
+                                     String detailedProductDescription,
                                      List<String> imageUrls,
                                      String origin,
                                      Long discountId,
@@ -36,6 +37,7 @@ public record PackageProductResponse(Long id,
                 .farmId(packageProduct.getFarm().getId())
                 .farmName(packageProduct.getFarm().getFarmName())
                 .productDescription(packageProduct.getProductDescription())
+                .detailedProductDescription(packageProduct.getDetailedProductDescription())
                 .imageUrls(imageUrls)
                 .origin(packageProduct.getOrigin())
                 .discountId(packageProduct.getDiscountId())

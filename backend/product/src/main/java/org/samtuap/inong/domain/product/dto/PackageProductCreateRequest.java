@@ -14,6 +14,7 @@ public record PackageProductCreateRequest(
         Long price,
         List<String> imageUrls,
         String productDescription,
+        String detailedProductDescription,
         String origin,
         Long wishCount,
         Long discountId
@@ -25,6 +26,7 @@ public record PackageProductCreateRequest(
                 .delivery_cycle(request.deliveryCycle)
                 .price(request.price)
                 .productDescription(request.productDescription)
+                .detailedProductDescription(request.detailedProductDescription)
                 .farm(farm)
                 .productCode("P-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .origin(request.origin)
