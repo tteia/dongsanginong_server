@@ -5,6 +5,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /$1
+#    nginx.ingress.kubernetes.io/websocket-services: "openvidu-service" # 웹소켓 지원
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   # 아래 tls 부분을 추가!
@@ -27,6 +28,6 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: openvidu-dev-service
+              name: openvidu-service
               port:
-                number: 80
+                number: 4443

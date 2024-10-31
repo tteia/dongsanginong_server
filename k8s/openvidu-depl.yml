@@ -1,21 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openvidu-dev-deployment
+  name: openvidu-deployment
   labels:
-    app: openvidu-dev
+    app: openvidu
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: openvidu-dev
+      app: openvidu
   template:
     metadata:
       labels:
-        app: openvidu-dev
+        app: openvidu
     spec:
       containers:
-      - name: openvidu-dev-container
-        image: openvidu/openvidu-dev
+      - name: openvidu-server
+        image: openvidu/openvidu-server-kms:latest #
+#        image: openvidu/openvidu-dev
         ports:
         - containerPort: 4443
+        env:
+#          - name: OPENVIDU_URL
+#            valueFrom:
+#              secretKeyRef:
+#                key: OPENVIDU_URL
+#                name: inong-app-secrets
+          - name: OPENVIDU_SECRET
+            valueFrom:
+              secretKeyRef:
+                key: OPENVIDU_SECRET
+                name: inong-app-secrets
+          - name: DOMAIN_OR_PUBLIC_IP
+            value: "api.inong.shop"
+          - name: OPENVIDU_SERVER_CONTEXT_PATH
+            value: "/openvidu"
