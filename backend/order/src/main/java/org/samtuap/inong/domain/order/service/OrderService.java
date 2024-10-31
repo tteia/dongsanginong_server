@@ -36,6 +36,8 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.samtuap.inong.common.exceptionType.CouponExceptionType.*;
 import static org.samtuap.inong.common.exceptionType.OrderExceptionType.*;
@@ -108,13 +110,18 @@ public class OrderService {
             coupon = couponRepository.findByIdOrThrow(reqDto.couponId());
         }
 
+        Long additionalDiscount = 0L;
+        if (packageProduct.discountId() != null && packageProduct.discountActive()) {
+            additionalDiscount = packageProduct.discount().longValue();
+        }
+
         // 2. 최초 결제 정보 저장하기
         Long originalAmount = packageProduct.price();
-        Long paidAmount = originalAmount;
+        Long paidAmount = originalAmount - additionalDiscount;
         Long discountAmount = 0L;
         if(coupon != null) {
             discountAmount = calculateDiscountAmount(coupon, originalAmount);
-            paidAmount = originalAmount - discountAmount;
+            paidAmount = originalAmount - discountAmount - additionalDiscount;
         }
 
         Ordering order = Ordering.builder()
@@ -283,13 +290,17 @@ public class OrderService {
     }
 
     public void makeReceipt(Ordering order, PackageProductResponse packageProduct, Long paidAmount, String paymentId) {
+        Long beforePrice = packageProduct.price();
+        Long discountPrice = beforePrice - paidAmount;
+        Long totalPrice = beforePrice - discountPrice;
+
         Receipt receipt = Receipt.builder()
                 .order(order)
                 .id(order.getId())
                 .paidAt(order.getCreatedAt())
-                .beforePrice(packageProduct.price())
-                .discountPrice(packageProduct.price() - paidAmount)
-                .totalPrice(packageProduct.price())
+                .beforePrice(beforePrice)
+                .discountPrice(discountPrice)
+                .totalPrice(totalPrice)
                 .paymentStatus(PaymentStatus.PAID)
                 .paymentMethodType(PaymentMethodType.KAKAOPAY) // TODO: 추후 확장 가능성 있음
                 .portOnePaymentId(paymentId)
@@ -301,13 +312,22 @@ public class OrderService {
 
     public Page<OrderPaymentListResponse> getOrderPaymentList(Pageable pageable, Long memberId) {
         Page<Ordering> ordersPage = orderRepository.findAllByMemberId(memberId, pageable);
+        List<Long> packageIds = ordersPage.stream().map(Ordering::getPackageId).collect(Collectors.toList());
+
+        // 삭제된 상품도 포함한 상품 조회
+        List<PackageProductResponse> products = productFeign.getPackageProductListContainDeleted(packageIds);
+
+        // 상품 ID 기준으로 조회한 상품 정보를 매핑하여 결제 리스트 반환
+        Map<Long, PackageProductResponse> productMap = products.stream()
+                .collect(Collectors.toMap(PackageProductResponse::id, Function.identity()));
 
         return ordersPage.map(ordering -> {
-            PackageProductResponse product = productFeign.getPackageProduct(ordering.getPackageId());
+            PackageProductResponse product = productMap.get(ordering.getPackageId());
             Receipt receipt = receiptRepository.findByOrderOrThrow(ordering);
             return OrderPaymentListResponse.from(ordering, product, receipt);
         });
     }
+
 
 
     //== Kafka로 주문/결제 취소 ==//

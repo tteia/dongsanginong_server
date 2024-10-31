@@ -51,7 +51,7 @@ public class DeliveryService {
 
         return deliveries.map(delivery -> {
             MemberDetailResponse member = memberFeign.getMemberById(delivery.getOrdering().getMemberId());
-            PackageProductResponse packageProduct = productFeign.getPackageProduct(delivery.getOrdering().getPackageId());
+            PackageProductResponse packageProduct = productFeign.getPackageProductContainDeleted(delivery.getOrdering().getPackageId());
             return DeliveryUpComingListResponse.from(delivery, member.name(), packageProduct.packageName());
         });
     }

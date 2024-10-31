@@ -45,6 +45,12 @@ public class PackageProductController {
         return packageProductService.getProductInfo(packageProductId);
     }
 
+    //  Feign 요청용 메서드(삭제 처리된 상품까
+    @GetMapping("/info/contain-deleted/{id}")
+    public PackageProductResponse getPackageProductContainDeleted(@PathVariable("id") Long packageProductId) {
+        return packageProductService.getProductInfoContainDeleted(packageProductId);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<PackageProductCreateResponse> createProduct(@RequestHeader Long sellerId,
                                                                       @RequestBody PackageProductCreateRequest request) {

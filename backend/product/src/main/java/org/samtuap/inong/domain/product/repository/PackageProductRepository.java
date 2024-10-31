@@ -26,6 +26,9 @@ public interface PackageProductRepository extends JpaRepository<PackageProduct, 
         return findById(packageId).orElseThrow(()->new BaseCustomException(PRODUCT_NOT_FOUND));
     }
 
+    @Query(value = "SELECT p.* FROM package_product AS p WHERE p.id = :id", nativeQuery = true)
+    PackageProduct findByIdIncludeDeleted(@Param("id") Long packageId);
+
     boolean existsByFarmIdAndDeletedAtIsNull(Long farmId);
 
     @Query(value = "SELECT p.* FROM package_product AS p WHERE p.id IN :ids", nativeQuery = true)
