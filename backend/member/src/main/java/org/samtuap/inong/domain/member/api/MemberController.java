@@ -105,6 +105,6 @@ public class MemberController {
 
     @GetMapping("/healthcheck")
     public String healthcheck() {
-        return "ok!";
+        return "ok2!";
     }
 }
