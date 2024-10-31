@@ -1,4 +1,3 @@
-
 name: deploy inong with k8s
 on:
   push:
