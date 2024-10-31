@@ -17,7 +17,7 @@ public class CouponConsumer {
     private final CouponService couponService;
     private final CouponRedisRepository couponRedisRepository;
 
-    @KafkaListener(topics = "coupon-issue-topic", groupId = "order-group", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "coupon-issue-topic", groupId = "coupon-order-group", containerFactory = "kafkaListenerContainerFactory")
     public void consume(String couponMessage) {
         CouponRequestMessage couponRequestMessage = null;
         ObjectMapper objectMapper = new ObjectMapper();
