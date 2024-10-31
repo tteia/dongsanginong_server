@@ -275,7 +275,7 @@ public class OrderTestService {
 
     //== Kafka로 주문/결제 취소 ==//
     @Transactional
-    @KafkaListener(topics = "order-rollback-topic", groupId = "member-group",/*member group으로 부터 메시지가 들어오면*/ containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "order-rollback-topic", groupId = "order-group",/*member group으로 부터 메시지가 들어오면*/ containerFactory = "kafkaListenerContainerFactory")
     public void consumeRollbackEvent(String message) {
         ObjectMapper objectMapper = new ObjectMapper();
         KafkaOrderRollbackRequest rollbackRequest = null;

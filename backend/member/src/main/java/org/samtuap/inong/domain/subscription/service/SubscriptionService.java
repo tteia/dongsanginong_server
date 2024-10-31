@@ -119,7 +119,7 @@ public class SubscriptionService {
 
     //== Kafka를 통한 정기 구독 비동기 처리 ==//
     @Transactional
-    @KafkaListener(topics = "subscription-topic", groupId = "order-group",/*order group으로 부터 메시지가 들어오면*/ containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "subscription-topic", groupId = "member-group",/*order group으로 부터 메시지가 들어오면*/ containerFactory = "kafkaListenerContainerFactory")
     public void consumeIssueNotification(String message /*listen 하면 스트링 형태로 메시지가 들어온다*/) {
         ObjectMapper objectMapper = new ObjectMapper();
         KafkaSubscribeProductRequest subscribeRequest = null;
