@@ -21,9 +21,9 @@ public class ReceiptService {
     private final ProductFeign productFeign;
 
 
-    public ReceiptInfoResponse getReceiptInfo(Long orderId) {
-        Ordering ordering = orderRepository.findById(orderId).orElseThrow(()-> new BaseCustomException(ORDER_NOT_FOUND));
-        Receipt receipt = receiptRepository.findByOrderOrThrow(ordering);
+    public ReceiptInfoResponse getReceiptInfo(Long receiptId) {
+        Receipt receipt = receiptRepository.findByIdOrThrow(receiptId);
+        Ordering ordering = orderRepository.findByIdOrThrow(receipt.getOrder().getId());
         PackageProductResponse product = productFeign.getPackageProduct(ordering.getPackageId());
         return ReceiptInfoResponse.from(receipt, product);
     }
