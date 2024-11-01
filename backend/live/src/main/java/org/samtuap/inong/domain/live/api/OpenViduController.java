@@ -19,17 +19,12 @@ import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.Session;
 
 @RestController
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class OpenViduController {
 
     private final OpenVidu openvidu;
     private final LiveService liveService;
-
-    public OpenViduController(@Value("${openvidu.secret}") String openviduSecret, LiveService liveService) {
-        this.openvidu = new OpenVidu("https://api.inong.shop:4443/", openviduSecret);
-        this.liveService = liveService;
-    }
 
     /**
      * (1) create session : session id랑 live id랑 다름
