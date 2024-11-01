@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.domain.live.dto.LiveSessionRequest;
 import org.samtuap.inong.domain.live.dto.LiveSessionResponse;
 import org.samtuap.inong.domain.live.service.LiveService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +19,17 @@ import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.Session;
 
 @RestController
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Slf4j
 public class OpenViduController {
 
     private final OpenVidu openvidu;
     private final LiveService liveService;
+
+    public OpenViduController(@Value("${openvidu.secret}") String openviduSecret, LiveService liveService) {
+        this.openvidu = new OpenVidu("https://api.inong.shop:4443/", openviduSecret);
+        this.liveService = liveService;
+    }
 
     /**
      * (1) create session : session id랑 live id랑 다름
