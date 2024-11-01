@@ -35,9 +35,9 @@ spec:
             value: "api.inong.shop"
           - name: OPENVIDU_SERVER_CONTEXT_PATH
             value: "/openvidu"
-#          - name: CERTIFICATE_TYPE
-#            value: letsencrypt-prod
-#          - name: LETSENCRYPT_EMAIL
-#            value: clearrworld@gmail.com
+          - name: CERTIFICATE_TYPE
+            value: letsencrypt
+          - name: LETSENCRYPT_EMAIL
+            value: clearrworld@gmail.com
 #          - name: OPENVIDU_SERVER_SSL
 #            value: "true"
