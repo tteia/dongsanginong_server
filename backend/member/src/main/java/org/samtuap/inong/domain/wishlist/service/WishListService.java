@@ -1,5 +1,6 @@
 package org.samtuap.inong.domain.wishlist.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.samtuap.inong.common.client.ProductFeign;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,9 +55,18 @@ public class WishListService {
         List<WishList> wishList = wishListRepository.findByMember(member);
         List<PackageProductResponse> dtoList = new ArrayList<>();
 
-        for (WishList wish : wishList) {
-            PackageProductResponse product = productFeign.getPackageProduct(wish.getPackageProductId());
-            dtoList.add(PackageProductResponse.from(product));
+        Iterator<WishList> iterator = wishList.iterator();
+        while (iterator.hasNext()) {
+            WishList wish = iterator.next();
+            try {
+                PackageProductResponse product = productFeign.getPackageProduct(wish.getPackageProductId());
+                dtoList.add(PackageProductResponse.from(product));
+            } catch (FeignException.NotFound e) {
+                // ProductFeign에서 상품 정보를 조회할 수 없는 경우 삭제 처리
+                wishListRepository.delete(wish);
+                iterator.remove(); // List에서 해당 항목 제거
+                log.warn("존재하지 않는 상품입니다 : packageProductId=" + wish.getPackageProductId());
+            }
         }
         return dtoList;
     }

@@ -102,6 +102,19 @@ public class PackageProductService {
         }
     }
 
+    @Cacheable(value = "PackageDetail", key = "#packageProductId", cacheManager = "contentCacheManager")
+    public PackageProductResponse getProductInfoContainDeleted(Long packageProductId) {
+        PackageProduct packageProduct = packageProductRepository.findByIdIncludeDeleted(packageProductId);
+        List<PackageProductImage> packageProductImage = packageProductImageRepository.findAllByPackageProduct(packageProduct);
+
+        if (packageProduct.getDiscountId() != null) {
+            Discount discount = discountRepository.findByIdThrow(packageProduct.getDiscountId());
+            return PackageProductResponse.fromEntity(packageProduct, packageProductImage, discount.getDiscount(), discount.isDiscountActive());
+        } else {
+            return PackageProductResponse.fromEntity(packageProduct, packageProductImage, null, false);
+        }
+    }
+
     public PackageProductResponse getProductInfoNoCache(Long packageProductId) {
         PackageProduct packageProduct = packageProductRepository.findByIdOrThrow(packageProductId);
         List<PackageProductImage> packageProductImage = packageProductImageRepository.findAllByPackageProduct(packageProduct);

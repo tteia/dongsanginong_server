@@ -51,7 +51,7 @@ public class DeliveryService {
 
         return deliveries.map(delivery -> {
             MemberDetailResponse member = memberFeign.getMemberById(delivery.getOrdering().getMemberId());
-            PackageProductResponse packageProduct = productFeign.getPackageProduct(delivery.getOrdering().getPackageId());
+            PackageProductResponse packageProduct = productFeign.getPackageProductContainDeleted(delivery.getOrdering().getPackageId());
             return DeliveryUpComingListResponse.from(delivery, member.name(), packageProduct.packageName());
         });
     }
@@ -102,7 +102,7 @@ public class DeliveryService {
 
         return deliveries.map(delivery -> {
             MemberDetailResponse member = memberFeign.getMemberById(delivery.getOrdering().getMemberId());
-            PackageProductResponse packageProduct = productFeign.getPackageProduct(delivery.getOrdering().getPackageId());
+            PackageProductResponse packageProduct = productFeign.getPackageProductContainDeleted(delivery.getOrdering().getPackageId());
 
             return DeliveryCompletedListResponse.from(delivery, member.name(), packageProduct.packageName());
         });
@@ -114,7 +114,7 @@ public class DeliveryService {
         Page<Delivery> deliveries = deliveryRepository.findByOrderingInAndDeliveryStatusIn(orderlist, statuses, pageable);
 
         return deliveries.map(delivery -> {
-            PackageProductResponse product = productFeign.getPackageProduct(delivery.getOrdering().getPackageId());
+            PackageProductResponse product = productFeign.getPackageProductContainDeleted(delivery.getOrdering().getPackageId());
             return DeliveryListResponse.fromEntity(product, delivery);
         });
     }

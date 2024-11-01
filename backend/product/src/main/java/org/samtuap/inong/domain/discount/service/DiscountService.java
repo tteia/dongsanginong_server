@@ -106,13 +106,6 @@ public class DiscountService {
             cacheManager.getCache("PackageDetail").evict(productId);
         }
 
-//        // 변경된 할인이 적용된 상품의 캐시 삭제 처리
-//        List<PackageProduct> discountProducts = packageProductRepository.findAllByDiscountId(discountId);
-//        if(!discountProducts.isEmpty()){
-//            for (PackageProduct product : discountProducts) {
-//                cacheManager.getCache("PackageDetail").evict(product.getId());
-//            }
-//        }
         discountRepository.save(existingDiscount);
     }
 
