@@ -35,5 +35,5 @@ spec:
             value: "api.inong.shop"
           - name: OPENVIDU_SERVER_CONTEXT_PATH
             value: "/openvidu"
-          - name: OPENVIDU_SERVER_SSL
-            value: "true"
+#          - name: OPENVIDU_SERVER_SSL
+#            value: "true"

@@ -120,6 +120,7 @@ jobs:
           kubectl apply -f ./backend/apigateway/k8s/apigateway-depl.yml
           kubectl rollout restart deployment apigateway-deployment
 
+      # openvidu
       - name: eks kubectl apply
         run: |
           kubectl apply -f ./k8s/openvidu-depl.yml
