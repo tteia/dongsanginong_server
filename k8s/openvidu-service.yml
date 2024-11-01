@@ -11,4 +11,5 @@ spec:
   - protocol: TCP
     port: 4443 # opeidu server가 보안 웹소켓 통신을 위해 기본으로 사용하는 포트
     targetPort: 4443
-  type: NodePort
+  type: ClusterIP
+
