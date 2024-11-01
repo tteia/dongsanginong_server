@@ -33,6 +33,8 @@ spec:
                 name: inong-app-secrets
           - name: DOMAIN_OR_PUBLIC_IP
             value: "api.inong.shop"
+          - name: OPENVIDU_PUBLICURL
+            value: "https://api.inong.shop/openvidu"
           - name: OPENVIDU_SERVER_CONTEXT_PATH
             value: "/openvidu"
           - name: CERTIFICATE_TYPE

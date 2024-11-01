@@ -7,7 +7,7 @@ metadata:
 #    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 #    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     # nginx.ingress.kubernetes.io/rewrite-target: /$1 # api-gateway에서 라우팅하므로 이부부은 주석 처리 되어야한다.
-#    nginx.ingress.kubernetes.io/websocket-services: "openvidu-service" # 웹소켓 지원
+    nginx.ingress.kubernetes.io/websocket-services: "openvidu-service" # 웹소켓 지원
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   # 아래 tls 부분을 추가!
