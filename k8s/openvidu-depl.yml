@@ -34,7 +34,7 @@ spec:
           - name: DOMAIN_OR_PUBLIC_IP
             value: "api.inong.shop"
           - name: OPENVIDU_PUBLICURL
-            value: "https://api.inong.shop/openvidu"
+            value: "https://api.inong.shop:4443/"
           - name: OPENVIDU_SERVER_CONTEXT_PATH
             value: "/openvidu"
           - name: CERTIFICATE_TYPE
