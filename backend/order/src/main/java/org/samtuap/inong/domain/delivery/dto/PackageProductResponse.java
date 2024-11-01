@@ -9,6 +9,9 @@ public record PackageProductResponse(
         Long farmId,
         String farmName,
         Long price,
-        Integer delivery_cycle) {
+        Integer delivery_cycle,
+        Long discountId,
+        Integer discount,
+        boolean discountActive) {
 
 }

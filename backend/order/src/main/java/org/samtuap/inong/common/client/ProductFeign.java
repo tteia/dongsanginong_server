@@ -15,6 +15,10 @@ public interface ProductFeign {
 
     @GetMapping(value = "/product/info/{id}")
     PackageProductResponse getPackageProduct(@PathVariable("id") Long packageProductId);
+
+    @GetMapping(value = "/product/info/contain-deleted/{id}")
+    PackageProductResponse getPackageProductContainDeleted(@PathVariable("id") Long packageProductId);
+
     @PostMapping(value = "/product/info")
     List<PackageProductResponse> getPackageProductList(@RequestBody List<Long> ids);
 
