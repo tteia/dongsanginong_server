@@ -10,11 +10,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 import static org.samtuap.inong.common.exceptionType.ProductExceptionType.PRODUCT_NOT_FOUND;
 
+@Repository
 public interface PackageProductRepository extends JpaRepository<PackageProduct, Long> {
     @Query("SELECT p FROM PackageProduct p WHERE p.id IN :ids")
     List<PackageProduct> findAllByIds(@Param("ids") List<Long> ids);

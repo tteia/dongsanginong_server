@@ -8,12 +8,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.samtuap.inong.common.exceptionType.ProductExceptionType.FARM_NOT_FOUND;
 
+@Repository
 public interface FarmRepository extends JpaRepository<Farm, Long> {
     default Farm findByIdOrThrow(Long farmId) {
         return findById(farmId).orElseThrow(() -> new BaseCustomException(FARM_NOT_FOUND));
