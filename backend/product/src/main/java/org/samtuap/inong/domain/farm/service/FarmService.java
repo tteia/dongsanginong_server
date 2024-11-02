@@ -25,6 +25,7 @@ import org.samtuap.inong.domain.product.entity.PackageProduct;
 import org.samtuap.inong.domain.product.repository.PackageProductRepository;
 import org.samtuap.inong.domain.seller.dto.FarmCategoryResponse;
 import org.samtuap.inong.domain.seller.dto.SellerFarmInfoUpdateRequest;
+import org.samtuap.inong.search.document.FarmDocument;
 import org.samtuap.inong.search.service.FarmSearchService;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -191,8 +192,8 @@ public class FarmService {
         }
 
         // elasticsearch✔️ : open search에 인덱싱
-//        FarmDocument farmDocument = FarmDocument.convertToDocument(farm);
-//        farmSearchService.indexFarmDocument(farmDocument);
+        FarmDocument farmDocument = FarmDocument.convertToDocument(farm);
+        farmSearchService.indexFarmDocument(farmDocument);
 
         return FarmCreateResponse.fromEntity(farm);
     }
@@ -229,8 +230,8 @@ public class FarmService {
         }
 
         // elasticsearch✔️ : open search에 수정
-//        FarmDocument farmDocument = FarmDocument.convertToDocument(farm);
-//        farmSearchService.updateFarm(farmDocument);
+        FarmDocument farmDocument = FarmDocument.convertToDocument(farm);
+        farmSearchService.updateFarm(farmDocument);
     }
 
     public List<FarmCategoryResponse> getAllFarmCategories() {

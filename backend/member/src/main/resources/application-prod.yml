@@ -16,7 +16,7 @@ spring:
     tomcat.initial-size: 3  # 적절한 수치로 조정
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     database: mysql
     database-platform: org.hibernate.dialect.MariaDBDialect
     generate-ddl: true
