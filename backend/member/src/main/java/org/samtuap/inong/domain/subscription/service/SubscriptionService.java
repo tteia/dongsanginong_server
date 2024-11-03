@@ -53,6 +53,7 @@ public class SubscriptionService {
     }
 
 
+    @Transactional
     public SubscriptionListGetResponse getSubscriptionToPay() {
         List<Subscription> subscriptions = subscriptionRepository.findAllByPayDate(LocalDate.now());
 
