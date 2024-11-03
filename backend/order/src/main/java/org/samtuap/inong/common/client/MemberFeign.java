@@ -10,6 +10,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,4 +37,5 @@ public interface MemberFeign {
 
     @GetMapping(value = "/subscription/product/{productId}")
     Optional<SubscriptionInfoGetResponse> getSubscriptionByProductId(@PathVariable("productId") Long productId, @RequestHeader("myId") Long memberId);
+
 }

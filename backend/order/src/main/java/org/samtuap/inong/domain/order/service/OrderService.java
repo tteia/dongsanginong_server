@@ -147,14 +147,13 @@ public class OrderService {
         // 4. 최초 결제하기
         String paymentId = kakaoPay(memberInfo, packageProduct, paidAmount, order);
 
+        log.info("line 150 >>>>>>>> {}", savedOrder.getId());
+
         // 5. 영수증 만들기
         makeReceipt(savedOrder, packageProduct, paidAmount, paymentId);
 
         // 6. orderCount 증가 이벤트 발행
         kafkaTemplate.send("order-count-topic", new KafkaOrderCountUpdateRequest(packageProduct.farmId(), packageProduct.id(), INCREASE));
-
-        // 7. subscription payDate 변경 TODO
-
 
 
         // 8. 알림 발송
@@ -289,6 +288,7 @@ public class OrderService {
         }
     }
 
+    @Transactional
     public void makeReceipt(Ordering order, PackageProductResponse packageProduct, Long paidAmount, String paymentId) {
         Long beforePrice = packageProduct.price();
         Long discountPrice = beforePrice - paidAmount;
