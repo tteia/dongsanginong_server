@@ -47,7 +47,7 @@ public class Coupon extends BaseEntity {
             // 무제한 발급이므로 수량을 감소시키지 않음
             return;
         }
-        if (this.quantity <= 0) {
+        if (this.quantity == 0) {
             throw new BaseCustomException(COUPON_SOLD_OUT);
         }
         this.quantity--;
