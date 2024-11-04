@@ -5,6 +5,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Profile;
 
 @Profile("local")
-@FeignClient(name = "farm-service", configuration = FeignConfig.class)
+@FeignClient(name = "product-service", configuration = FeignConfig.class)
 public interface FarmFeignLocal extends FarmFeign {
 }
