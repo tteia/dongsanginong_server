@@ -33,10 +33,10 @@ public class ReviewService {
         // 패키지 상품 조회
         PackageProduct packageProduct = packageProductRepository.findByIdOrThrow(packageProductId);
 
-        // 이미 리뷰가 존재하는지 확인
-        if (reviewRepository.findByPackageProductIdAndMemberId(packageProductId, memberId).isPresent()) {
-            throw new BaseCustomException(REVIEW_ALREADY_EXIST);
-        }
+//        // 이미 리뷰가 존재하는지 확인
+//        if (reviewRepository.findByPackageProductIdAndMemberId(packageProductId, memberId).isPresent()) {
+//            throw new BaseCustomException(REVIEW_ALREADY_EXIST);
+//        }
 
         // Review 엔티티 생성 및 저장
         Review review = request.toEntity(packageProduct, memberId);
