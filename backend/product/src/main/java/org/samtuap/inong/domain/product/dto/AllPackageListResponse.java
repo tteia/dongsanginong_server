@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import org.samtuap.inong.domain.product.entity.PackageProduct;
 
+import java.time.LocalDateTime;
+
 @Builder
 public record AllPackageListResponse(@NotNull Long id,
                                      @NotNull String packageName,
@@ -13,7 +15,8 @@ public record AllPackageListResponse(@NotNull Long id,
                                      @NotNull Long price,
                                      Long discountId,
                                      Integer discount,
-                                     boolean discountActive
+                                     boolean discountActive,
+                                     LocalDateTime createdAt
                                      ) {
     public static AllPackageListResponse fromEntity(PackageProduct product, String imageUrl, Long orderCount, Integer discount, boolean discountActive){
         return AllPackageListResponse.builder()
@@ -26,6 +29,7 @@ public record AllPackageListResponse(@NotNull Long id,
                 .discountId(product.getDiscountId())
                 .discount(discount)
                 .discountActive(discountActive)
+                .createdAt(product.getCreatedAt())
                 .build();
     }
 }
