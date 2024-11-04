@@ -1,10 +1,13 @@
 package org.samtuap.inong.domain.coupon.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.samtuap.inong.common.exception.BaseCustomException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.Set;
+
+import static org.samtuap.inong.common.exceptionType.CouponExceptionType.COUPON_SOLD_OUT;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,6 +27,9 @@ public class CouponRedisRepository {
     public Long decreaseCouponQuantity(Long couponId) {
         String key = getCouponQuantityKey(couponId);
         String currentValue = redisTemplate.opsForValue().get(key);
+        if("0".equals(currentValue)) {
+            throw new BaseCustomException(COUPON_SOLD_OUT);
+        }
         if ("-1".equals(currentValue)) {
             return -1L;
         }
