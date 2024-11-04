@@ -15,6 +15,7 @@ import org.samtuap.inong.domain.seller.entity.SellerRole;
 import org.samtuap.inong.domain.seller.jwt.domain.JwtToken;
 import org.samtuap.inong.domain.seller.jwt.service.JwtService;
 import org.samtuap.inong.domain.seller.repository.SellerRepository;
+import org.samtuap.inong.search.service.FarmSearchService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import static org.samtuap.inong.common.exceptionType.SellerExceptionType.*;
@@ -35,6 +36,7 @@ public class SellerService {
     private final JwtService jwtService;
     private final PackageProductRepository packageProductRepository;
     private final RedisTool redisUtil;
+    private final FarmSearchService farmSearchService;
 
     @Transactional
     public boolean  verifyAuthCode(String email, String code) {
@@ -113,7 +115,7 @@ public class SellerService {
             // 농장 삭제 진행
             farmRepository.delete(farm);
             // elasticsearch✔️ : 삭제
-//            farmSearchService.deleteFarm(String.valueOf(farm.getId()));
+            farmSearchService.deleteFarm(String.valueOf(farm.getId()));
         }
 
         // 삭제되지 않은 패키지가 없으면 농장과 판매자 삭제 진행

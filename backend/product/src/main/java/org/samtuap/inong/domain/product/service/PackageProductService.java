@@ -19,6 +19,7 @@ import org.samtuap.inong.domain.product.repository.PackageProductImageRepository
 import org.samtuap.inong.domain.product.repository.PackageProductRepository;
 import org.samtuap.inong.domain.seller.entity.Seller;
 import org.samtuap.inong.domain.seller.repository.SellerRepository;
+import org.samtuap.inong.search.document.PackageProductDocument;
 import org.samtuap.inong.search.service.PackageProductSearchService;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -142,8 +143,8 @@ public class PackageProductService {
         packageProductImageService.saveImages(savedPackageProduct, imageUrls);
 
         // elasticsearch✔️ : open search에 인덱싱
-//        PackageProductDocument packageProductDocument = PackageProductDocument.convertToDocument(savedPackageProduct);
-//        packageProductSearchService.indexProductDocument(packageProductDocument);
+        PackageProductDocument packageProductDocument = PackageProductDocument.convertToDocument(savedPackageProduct);
+        packageProductSearchService.indexProductDocument(packageProductDocument);
 
         // 저장된 엔티티를 DTO로 반환
         return PackageProductCreateResponse.fromEntity(savedPackageProduct, imageUrls);
@@ -174,7 +175,7 @@ public class PackageProductService {
         }
 
         // elasticsearch✔️ : 삭제
-//        packageProductSearchService.deleteProduct(String.valueOf(packageId));
+        packageProductSearchService.deleteProduct(String.valueOf(packageId));
     }
 
     @Transactional
@@ -203,8 +204,8 @@ public class PackageProductService {
         }
 
         // elasticsearch✔️ : open search에 수정
-//        PackageProductDocument updateProduct = PackageProductDocument.convertToDocument(packageProduct);
-//        packageProductSearchService.updateProduct(updateProduct);
+        PackageProductDocument updateProduct = PackageProductDocument.convertToDocument(packageProduct);
+        packageProductSearchService.updateProduct(updateProduct);
     }
 
     // Feign 요청 용

@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentScheduler {
     private final OrderService orderService;
     @SchedulerLock(name = "shedLock_regular_payment", lockAtLeastFor = "1m", lockAtMostFor = "59m")
-    @Scheduled(cron = "0 0 13 * * *")
+    @Scheduled(cron = "0 0 7 * * *")
     public void regularPayment() {
         orderService.regularPay();
     }

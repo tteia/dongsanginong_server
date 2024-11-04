@@ -1,11 +1,13 @@
 package org.samtuap.inong.domain.order.repository;
 
 
+import org.samtuap.inong.common.exception.BaseCustomException;
 import org.samtuap.inong.domain.order.dto.PackageOrderCount;
 import org.samtuap.inong.domain.order.dto.PackageProductOrderResponse;
 import org.samtuap.inong.domain.order.dto.SalesDataGetResponse;
 import org.samtuap.inong.domain.order.dto.TopPackageResponse;
 import org.samtuap.inong.domain.order.entity.Ordering;
+import org.samtuap.inong.domain.receipt.entity.Receipt;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +17,9 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static org.samtuap.inong.common.exceptionType.OrderExceptionType.ORDER_NOT_FOUND;
+import static org.samtuap.inong.common.exceptionType.ReceiptExceptionType.RECEIPT_NOT_FOUND;
 
 public interface OrderRepository extends JpaRepository<Ordering, Long> {
 
@@ -38,4 +43,7 @@ public interface OrderRepository extends JpaRepository<Ordering, Long> {
     @Query("SELECT new org.samtuap.inong.domain.order.dto.PackageOrderCount(o.packageId, COUNT(o.id)) FROM Ordering o WHERE o.farmId = :farmId AND o.createdAt >= :startAt AND o.createdAt <= :endAt GROUP BY o.packageId")
     List<PackageOrderCount> findAllByFarmIdAndBetweenStartAtAndEndAt(Long farmId, LocalDateTime startAt, LocalDateTime endAt);
 
+    default Ordering findByIdOrThrow(Long id) {
+        return findById(id).orElseThrow(() -> new BaseCustomException(ORDER_NOT_FOUND));
+    }
 }
