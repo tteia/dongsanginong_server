@@ -11,7 +11,8 @@ public record MemberCouponListResponse(
         LocalDateTime expiration,
         Long memberId,
         String useYn,
-        LocalDateTime issuedAt
+        LocalDateTime issuedAt,
+        Long farmId
 ) {
     public static MemberCouponListResponse fromEntity(MemberCouponRelation relation) {
         return new MemberCouponListResponse(
@@ -21,7 +22,8 @@ public record MemberCouponListResponse(
                 relation.getCoupon().getExpiration(),          // 유효기간 추가
                 relation.getMemberId(),
                 relation.getUseYn(),
-                relation.getIssuedAt()
+                relation.getIssuedAt(),
+                relation.getCoupon().getFarmId()
         );
     }
 }
