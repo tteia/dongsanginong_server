@@ -54,7 +54,7 @@ public class NotificationService {
             Long todayCount = orderFeign.getDeliveryCountByFarmId(farm.getId(), LocalDate.now().toString());
             Long tomorrowCount = orderFeign.getDeliveryCountByFarmId(farm.getId(), LocalDate.now().plusDays(1).toString());
 
-            if(todayCount == 0L || tomorrowCount == 0L) {
+            if(todayCount == 0L && tomorrowCount == 0L) {
                 continue;
             }
 
