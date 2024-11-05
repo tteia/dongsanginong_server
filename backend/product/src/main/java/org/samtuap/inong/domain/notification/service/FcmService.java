@@ -14,9 +14,9 @@ import org.samtuap.inong.domain.farm.repository.FarmRepository;
 import org.samtuap.inong.domain.notification.dto.FcmTokenSaveRequest;
 import org.samtuap.inong.domain.notification.dto.KafkaNotificationRequest;
 import org.samtuap.inong.domain.notification.dto.NotificationIssueRequest;
-import org.samtuap.inong.domain.notification.entity.FcmToken;
+import org.samtuap.inong.domain.notification.entity.SellerFcmToken;
 import org.samtuap.inong.domain.notification.entity.SellerNotification;
-import org.samtuap.inong.domain.notification.repository.FcmTokenRepository;
+import org.samtuap.inong.domain.notification.repository.SellerFcmTokenRepository;
 import org.samtuap.inong.domain.notification.repository.SellerNotificationRepository;
 import org.samtuap.inong.domain.seller.entity.Seller;
 import org.samtuap.inong.domain.seller.repository.SellerRepository;
@@ -34,24 +34,24 @@ import static org.samtuap.inong.common.exceptionType.NotificationExceptionType.I
 @Service
 public class FcmService {
     private final SellerRepository sellerRepository;
-    private final FcmTokenRepository fcmTokenRepository;
+    private final SellerFcmTokenRepository sellerFcmTokenRepository;
     private final FarmRepository farmRepository;
     private final SellerNotificationRepository sellerNotificationRepository;
 
     @Transactional
     public void saveFcmToken(Long memberId, FcmTokenSaveRequest fcmTokenSaveRequest) {
         Seller seller = sellerRepository.findByIdOrThrow(memberId);
-        Optional<FcmToken> fcmTokenOpt = fcmTokenRepository.findByToken(fcmTokenSaveRequest.fcmToken());
+        Optional<SellerFcmToken> fcmTokenOpt = sellerFcmTokenRepository.findByToken(fcmTokenSaveRequest.fcmToken());
 
         if(fcmTokenOpt.isPresent()) { // 이미 저장돼 있는 경우
             return;
         }
 
-        FcmToken fcmToken = FcmToken.builder()
+        SellerFcmToken fcmToken = SellerFcmToken.builder()
                 .token(fcmTokenSaveRequest.fcmToken())
                 .seller(seller).build();
 
-        fcmTokenRepository.save(fcmToken);
+        sellerFcmTokenRepository.save(fcmToken);
     }
 
     public void issueNotice(NotificationIssueRequest notiRequest) {
@@ -62,10 +62,8 @@ public class FcmService {
     }
 
     protected void issueMessage(Long sellerId, String title, String content, String url) {
-
-        log.info("line 66 >>> issueMessage, {}, {}, {}, {}", sellerId, title, content, url);
         Seller seller = sellerRepository.findByIdOrThrow(sellerId);
-        List<FcmToken> fcmTokens = fcmTokenRepository.findAllBySeller(seller);
+        List<SellerFcmToken> fcmTokens = sellerFcmTokenRepository.findAllBySeller(seller);
 
         SellerNotification noti = SellerNotification.builder()
                 .title(title)
@@ -77,7 +75,7 @@ public class FcmService {
 
         sellerNotificationRepository.save(noti);
 
-        for (FcmToken fcmToken : fcmTokens) {
+        for (SellerFcmToken fcmToken : fcmTokens) {
             String token = fcmToken.getToken();
 
             if(token == null || token.isEmpty()) {
@@ -127,11 +125,11 @@ public class FcmService {
     @Transactional
     public void deleteFcmToken(String fcmToken, Long sellerId) {
         Seller seller = sellerRepository.findByIdOrThrow(sellerId);
-        Optional<FcmToken> fcmTokenOpt = fcmTokenRepository.findBySellerAndToken(seller, fcmToken);
+        Optional<SellerFcmToken> fcmTokenOpt = sellerFcmTokenRepository.findBySellerAndToken(seller, fcmToken);
 
         if(fcmTokenOpt.isPresent()) {
-            FcmToken token = fcmTokenOpt.get();
-            fcmTokenRepository.delete(token);
+            SellerFcmToken token = fcmTokenOpt.get();
+            sellerFcmTokenRepository.delete(token);
         }
     }
 }

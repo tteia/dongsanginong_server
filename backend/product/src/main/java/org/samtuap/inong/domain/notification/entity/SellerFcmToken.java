@@ -13,7 +13,7 @@ import org.samtuap.inong.domain.seller.entity.Seller;
 @NoArgsConstructor
 @Getter
 @Entity
-public class FcmToken extends BaseEntity {
+public class SellerFcmToken extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
