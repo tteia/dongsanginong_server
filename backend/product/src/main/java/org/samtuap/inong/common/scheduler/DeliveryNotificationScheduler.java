@@ -15,7 +15,7 @@ public class DeliveryNotificationScheduler {
     private final NotificationService notificationService;
 
     @SchedulerLock(name = "shedLock_notify_delivery", lockAtLeastFor = "1m", lockAtMostFor = "59m")
-    @Scheduled(cron = "0 0 15 * * *")
+    @Scheduled(cron = "0 0 7 * * *")
     public void notifyTodayDelivery() {
         notificationService.notifyTodayDelivery();
     }
