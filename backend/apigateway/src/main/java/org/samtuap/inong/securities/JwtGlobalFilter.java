@@ -23,7 +23,7 @@ import java.util.*;
 @Slf4j
 @Component
 public class JwtGlobalFilter implements GlobalFilter {
-
+ 
     @Value("${jwt.secret_key}")
     private String secretKey;
 
